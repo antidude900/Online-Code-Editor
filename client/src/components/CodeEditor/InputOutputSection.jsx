@@ -37,7 +37,6 @@ export default function InputOutputSection() {
 
 		return () => {
 			if (textareaRef.current) {
-				
 				textareaRef.current.removeEventListener("scroll", checkIfScrollable);
 			}
 			window.removeEventListener("resize", checkIfScrollable);
@@ -50,10 +49,8 @@ export default function InputOutputSection() {
 	};
 
 	const scrollToTop = () => {
-		if (textareaRef.current)
-			textareaRef.current.scrollTop = 0
+		if (textareaRef.current) textareaRef.current.scrollTop = 0;
 	};
-
 
 	const handleInputChange = (e) => {
 		dispatch(setCodeEditor({ input: e.target.value }));
@@ -61,9 +58,9 @@ export default function InputOutputSection() {
 	};
 
 	return (
-		<div className="input-output w-[40vw] ml-10 h-[80vh] flex flex-col mt-[70px]">
+		<div className="input-output w-[40vw] ml-10 h-[80vh] flex flex-col mt-[65px]">
 			<div className="input-box h-[30%] mb-[20px] flex flex-col">
-				<div className="Label w-[100px] text-[20px] font-bold h-[20%]">
+				<div className="text-[#A6ADBB] w-[100px] text-[20px] font-bold h-[20%]">
 					Input
 				</div>
 
@@ -108,7 +105,7 @@ export default function InputOutputSection() {
 			</div>
 
 			<div className="output-box h-[70%] flex flex-col">
-				<div className="Label w-[100px] text-[20px] font-bold h-[8.62%]">
+				<div className="text-[#A6ADBB] w-[100px] text-[20px] font-bold h-[8.62%]">
 					Output
 				</div>
 				<div
@@ -121,16 +118,14 @@ export default function InputOutputSection() {
 					} p-2 rounded-[10px]`}
 				>
 					<div className="overflow-auto w-full h-[98%] p-1">
-						{output
-							? output.map((line, i) => (
-									<pre key={i} className="whitespace-pre-wrap break-words">
-										{line}
-									</pre>
-							  ))
-							: "Run Code to See Output"}
+						{output ? (
+							<pre className="whitespace-pre-wrap break-words">{output}</pre>
+						) : (
+							"Run Code to See Output"
+						)}
 					</div>
 				</div>
-			</div>
+			</div>	
 		</div>
 	);
 }

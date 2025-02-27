@@ -34,21 +34,17 @@ export default function CodeEditor() {
 		try {
 			setState({ isLoading: true });
 			console.log("code", code);
-			const {run:result} = await executeCode({
+			const { run: result } = await executeCode({
 				language,
 				code,
 				input,
-			}).unwrap()
-		
-			console.log("message",result.message);
-			const formattedOutput = result.output
-				.split("\n")
-				.map((line) => line.replace(/\t/g, "    "));
+			}).unwrap();
+
+			console.log("message", result.message);
+			const formattedOutput = result.output.replace(/\t/g, "    ");
 
 			setState({ output: formattedOutput });
 			setState({ isError: result.stderr ? true : false });
-
-			console.log(result.output.split("\n"));
 		} catch (error) {
 			console.log(error);
 		} finally {
@@ -67,14 +63,14 @@ export default function CodeEditor() {
 							<LanguageMenu />
 
 							<SendEmail />
-							<div
-								className={`btn ${
+							<button	
+								className={`${
 									isLoading ? "cursor-not-allowed opacity-50" : ""
-								}`}
+								} btn`}
 								onClick={runCode}
 							>
 								Run
-							</div>
+							</button>
 						</div>
 					</div>
 					<EditorSection />

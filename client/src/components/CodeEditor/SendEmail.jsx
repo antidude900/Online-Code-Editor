@@ -8,8 +8,7 @@ export default function SendEmail() {
 	const [address, setAddress] = useState("");
 	const [subject, setSubject] = useState("");
 	const [sendMail] = useSendMailMutation();
-	const formattedOutput = output.join("\n");
-  
+
 	async function send(to, message) {
 		try {
 			setSending(true);
@@ -63,7 +62,16 @@ export default function SendEmail() {
 							onClick={() =>
 								send(
 									address,
-									`Code:\n${code}\nInput:\n${input}\nOutput:\n${formattedOutput}`
+									`<hr>
+    								<h2>Code:</h2>
+    								<pre>${code}</pre>
+    								<hr>
+    								<h2>Input:</h2>
+    								<pre>${input}</pre>
+    								<hr>
+    								<h2>Output:</h2>
+    								<pre>${output}</pre>
+    								<hr>`
 								)
 							}
 						>

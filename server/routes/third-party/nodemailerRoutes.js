@@ -19,7 +19,7 @@ router.post("/send", (req, res) => {
 		from: process.env.EMAIL,
 		to: req.body.to,
 		subject: req.body.subject,
-		text: req.body.message,
+		html: req.body.message,
 	};
 
 	transporter.sendMail(mailOptions, (error) => {
