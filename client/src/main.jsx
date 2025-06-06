@@ -14,10 +14,10 @@ import Editor from "./pages/Editor.jsx";
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <Navigate to="/home" replace={true} />,
+		element: <Navigate to="/editor" replace={true} />,
 	},
 	{
-		path: "/home",
+		path: "/homeTest",
 		element: <Home />,
 	},
 	{
