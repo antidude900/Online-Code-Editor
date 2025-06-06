@@ -25,7 +25,7 @@ export default function LanguageMenu() {
 			</div>
 			<ul
 				tabIndex="0"
-				className="dropdown-content bg-[#282A36] absolute rounded-xl z-[1] w-[200px] font-[500] text-[14px] divide-y divide-gray-700 overflow-hidden shadow-md shadow-gray-900"
+				className="dropdown-content bg-[#282A36] absolute rounded-xl z-[1] w-[200px] font-[500] text-[14px] 	 shadow-md shadow-gray-900"
 			>
 				{languages.map(([lang]) => (
 					<li
