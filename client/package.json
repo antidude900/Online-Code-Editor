@@ -23,7 +23,7 @@
 		"@open-rpc/client-js": "^1.8.1",
 		"@reduxjs/toolkit": "^2.5.0",
 		"@uiw/codemirror-theme-dracula": "^4.23.7",
-		"axios": "^1.7.9",
+		"axios": "^1.8.2",
 		"codemirror": "^5.65.18",
 		"codemirror-languageserver": "^1.11.0",
 		"lucide-react": "^0.468.0",
