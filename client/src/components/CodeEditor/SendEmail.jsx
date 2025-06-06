@@ -1,21 +1,23 @@
-import axios from "axios";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useSendMailMutation } from "../../store/api/third-party/nodemailer";
 
 export default function SendEmail() {
 	const { code, input, output } = useSelector((state) => state.codeEditor);
 	const [sending, setSending] = useState(false);
 	const [address, setAddress] = useState("");
 	const [subject, setSubject] = useState("");
-	const formattedOutput = output.join("\n");
+	const [sendMail] = useSendMailMutation();
+
 	async function send(to, message) {
 		try {
 			setSending(true);
-			await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/SendMail`, {
+			await sendMail({
 				to: to,
 				subject: subject || "Code From LinkCode",
 				message: message,
 			});
+
 			alert("Email sent!");
 		} catch (err) {
 			alert(err);
@@ -60,7 +62,16 @@ export default function SendEmail() {
 							onClick={() =>
 								send(
 									address,
-									`Code:\n${code}\nInput:\n${input}\nOutput:\n${formattedOutput}`
+									`<hr>
+    								<h2>Code:</h2>
+    								<pre>${code}</pre>
+    								<hr>
+    								<h2>Input:</h2>
+    								<pre>${input}</pre>
+    								<hr>
+    								<h2>Output:</h2>
+    								<pre>${output}</pre>
+    								<hr>`
 								)
 							}
 						>

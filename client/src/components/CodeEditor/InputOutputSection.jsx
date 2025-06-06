@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import { PLACEHOLDER } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +8,8 @@ export default function InputOutputSection() {
 	const { output, isError, input } = useSelector((state) => state.codeEditor);
 	const dispatch = useDispatch();
 
-	const [isScrollable, setIsScrollable] = useState(false);
+	const [isScrollableDown, setIsScrollableDown] = useState(false);
+	const [isScrollableUp, setIsScrollableUp] = useState(false);
 	const textareaRef = useRef(null);
 
 	const checkIfScrollable = () => {
@@ -17,8 +19,10 @@ export default function InputOutputSection() {
 			const isAtBottom =
 				textareaRef.current.scrollHeight - textareaRef.current.scrollTop ===
 				textareaRef.current.clientHeight;
+			const isAtTop = textareaRef.current.scrollTop === 0;
 
-			setIsScrollable(isScrollable && !isAtBottom);
+			setIsScrollableDown(isScrollable && !isAtBottom);
+			setIsScrollableUp(isScrollable && !isAtTop);
 		}
 	};
 
@@ -33,7 +37,6 @@ export default function InputOutputSection() {
 
 		return () => {
 			if (textareaRef.current) {
-				// eslint-disable-next-line react-hooks/exhaustive-deps
 				textareaRef.current.removeEventListener("scroll", checkIfScrollable);
 			}
 			window.removeEventListener("resize", checkIfScrollable);
@@ -45,15 +48,19 @@ export default function InputOutputSection() {
 			textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
 	};
 
+	const scrollToTop = () => {
+		if (textareaRef.current) textareaRef.current.scrollTop = 0;
+	};
+
 	const handleInputChange = (e) => {
 		dispatch(setCodeEditor({ input: e.target.value }));
 		checkIfScrollable();
 	};
 
 	return (
-		<div className="input-output w-[40vw] ml-10 h-[80vh] flex flex-col mt-[70px]">
+		<div className="input-output w-[40vw] ml-10 h-[80vh] flex flex-col mt-[65px]">
 			<div className="input-box h-[30%] mb-[20px] flex flex-col">
-				<div className="Label w-[100px] text-[20px] font-bold h-[20%]">
+				<div className="text-[#A6ADBB] w-[100px] text-[20px] font-bold h-[20%]">
 					Input
 				</div>
 
@@ -74,10 +81,20 @@ export default function InputOutputSection() {
 						placeholder={PLACEHOLDER}
 						onChange={handleInputChange}
 					/>
-					{isScrollable && (
+					{isScrollableUp && (
+						<div className="absolute top-[-23px] right-[260px] text-white opacity-50 font-bold">
+							<span
+								className="text-xl border-4 border-gray-500 rounded-full cursor-pointer p-[1px] leading-none inline-block "
+								onClick={scrollToTop}
+							>
+								↑
+							</span>
+						</div>
+					)}
+					{isScrollableDown && (
 						<div className="absolute top-[110px] right-[260px] text-white opacity-50 font-bold">
 							<span
-								className="text-xl border-4 border-gray-500 rounded-full cursor-pointer"
+								className="text-xl border-4 border-gray-500 rounded-full cursor-pointer p-[1px] leading-none inline-block"
 								onClick={scrollToBottom}
 							>
 								↓
@@ -88,7 +105,7 @@ export default function InputOutputSection() {
 			</div>
 
 			<div className="output-box h-[70%] flex flex-col">
-				<div className="Label w-[100px] text-[20px] font-bold h-[8.62%]">
+				<div className="text-[#A6ADBB] w-[100px] text-[20px] font-bold h-[8.62%]">
 					Output
 				</div>
 				<div
@@ -101,16 +118,14 @@ export default function InputOutputSection() {
 					} p-2 rounded-[10px]`}
 				>
 					<div className="overflow-auto w-full h-[98%] p-1">
-						{output
-							? output.map((line, i) => (
-									<pre key={i} className="whitespace-pre-wrap break-words">
-										{line}
-									</pre>
-							  ))
-							: "Run Code to See Output"}
+						{output ? (
+							<pre className="whitespace-pre-wrap break-words">{output}</pre>
+						) : (
+							"Run Code to See Output"
+						)}
 					</div>
 				</div>
-			</div>
+			</div>	
 		</div>
 	);
 }

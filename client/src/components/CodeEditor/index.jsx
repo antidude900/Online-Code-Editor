@@ -2,15 +2,14 @@
 import { useEffect } from "react";
 import LanguageMenu from "./LanguageMenu";
 import { CODE_SNIPPETS } from "../../constants.js";
-import { executeCode } from "../../Api";
 import EditorSection from "./EditorSection.jsx";
 import InputOutputSection from "./InputOutputSection.jsx";
 import SendEmail from "./SendEmail.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { setCodeEditor } from "../../store/states/CodeEditor/CodeEditorSlice.js";
+import { useExecuteCodeMutation } from "../../store/api/third-party/piston.js";
 
 export default function CodeEditor() {
-
 	const { code, language, input, isLoading } = useSelector(
 		(state) => state.codeEditor
 	);
@@ -19,7 +18,8 @@ export default function CodeEditor() {
 	const setState = (state) => {
 		dispatch(setCodeEditor(state));
 	};
-	
+	const [executeCode] = useExecuteCodeMutation();
+
 	useEffect(() => {
 		setState({ code: CODE_SNIPPETS[language] });
 		setState({ output: [] });
@@ -33,15 +33,18 @@ export default function CodeEditor() {
 		if (!code) return;
 		try {
 			setState({ isLoading: true });
-			const { run: result } = await executeCode(language, code, input);
-			const formattedOutput = result.output
-				.split("\n")
-				.map((line) => line.replace(/\t/g, "    "));
+			console.log("code", code);
+			const { run: result } = await executeCode({
+				language,
+				code,
+				input,
+			}).unwrap();
+
+			console.log("message", result.message);
+			const formattedOutput = result.output.replace(/\t/g, "    ");
 
 			setState({ output: formattedOutput });
 			setState({ isError: result.stderr ? true : false });
-
-			console.log(result.output.split("\n"));
 		} catch (error) {
 			console.log(error);
 		} finally {
@@ -50,7 +53,6 @@ export default function CodeEditor() {
 	}
 	return (
 		<>
-		
 			<div className="whole-editor flex">
 				<div className="editor w-[60vw]">
 					<div className="labels flex items-center mb-5 h-[50px]">
@@ -60,15 +62,15 @@ export default function CodeEditor() {
 						<div className="label-buttons flex justify-between grow mr-3">
 							<LanguageMenu />
 
-							<SendEmail/>
-							<div
-								className={`btn ${
+							<SendEmail />
+							<button	
+								className={`${
 									isLoading ? "cursor-not-allowed opacity-50" : ""
-								}`}
+								} btn`}
 								onClick={runCode}
 							>
 								Run
-							</div>
+							</button>
 						</div>
 					</div>
 					<EditorSection />

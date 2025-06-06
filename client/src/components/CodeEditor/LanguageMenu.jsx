@@ -18,14 +18,24 @@ export default function LanguageMenu() {
 	return (
 		<div className="dropdown">
 			<div tabIndex="0" role="button" className="btn">
-				{language} <ChevronDown size={15} />
+				<span className="flex justify-around items-center w-[120px]">
+					<img src={`/assets/${language}.svg`} className="w-7 h-7 mr-2" />
+					{language} <ChevronDown size={15} className="ml-1" />
+				</span>
 			</div>
 			<ul
 				tabIndex="0"
-				className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+				className="dropdown-content bg-[#282A36] absolute rounded-xl z-[1] w-[200px] font-[500] text-[14px] 	 shadow-md shadow-gray-900"
 			>
 				{languages.map(([lang]) => (
-					<li onClick={() => handleClick(lang)} key={lang}>
+					<li
+						onClick={() => {
+							handleClick(lang);
+						}}
+						key={lang}
+						className="py-3 cursor-pointer flex items-center hover:bg-[#1D1F28] px-2"
+					>
+						<img src={`/assets/${lang}.svg`} className="w-7 h-7 mr-2" />
 						<a className={lang === language ? "text-blue-500 font-black" : ""}>
 							{lang}
 						</a>
