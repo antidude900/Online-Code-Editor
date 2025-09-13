@@ -2,8 +2,8 @@ import express, { json } from "express";
 
 import cors from "cors";
 import dotenv from "dotenv";
-import pistonRoutes from "./routes/third-party/pistonRoutes.js";
-import nodemailerRoutes from "./routes/third-party/nodemailerRoutes.js";
+import pistonRoutes from "./routes/pistonRoutes.js";
+import nodemailerRoutes from "./routes/nodemailerRoutes.js";
 dotenv.config();
 
 const app = express();

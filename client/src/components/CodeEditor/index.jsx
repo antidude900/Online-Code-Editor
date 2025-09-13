@@ -6,8 +6,8 @@ import EditorSection from "./EditorSection.jsx";
 import InputOutputSection from "./InputOutputSection.jsx";
 import SendEmail from "./SendEmail.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { setCodeEditor } from "../../store/states/CodeEditor/CodeEditorSlice.js";
-import { useExecuteCodeMutation } from "../../store/api/third-party/piston.js";
+import { setCodeEditor } from "../../redux/states/CodeEditorSlice.js";
+import { useExecuteCodeMutation } from "../../redux/api/pistonApiSlice.js";
 
 export default function CodeEditor() {
 	const { code, language, input, isLoading } = useSelector(
@@ -63,7 +63,7 @@ export default function CodeEditor() {
 							<LanguageMenu />
 
 							<SendEmail />
-							<button	
+							<button
 								className={`${
 									isLoading ? "cursor-not-allowed opacity-50" : ""
 								} btn`}

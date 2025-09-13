@@ -1,4 +1,4 @@
-import { apiSlice } from "../apiSlice";
+import { apiSlice } from "./apiSlice";
 
 export const nodemailerApiSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({

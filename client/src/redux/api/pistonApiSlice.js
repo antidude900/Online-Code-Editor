@@ -1,5 +1,5 @@
-import { LANGUAGES } from "../../../constants";
-import { apiSlice } from "../apiSlice";
+import { LANGUAGES } from "../../constants";
+import { apiSlice } from "./apiSlice";
 
 export const pistonApiSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({

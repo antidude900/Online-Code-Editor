@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import CodeEditorReducer from "./states/CodeEditor/CodeEditorSlice.js";
+import CodeEditorReducer from "./states/CodeEditorSlice.js";
 import { apiSlice } from "./api/apiSlice.js";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
