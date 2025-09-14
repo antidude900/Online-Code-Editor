@@ -136,7 +136,9 @@ const Register = () => {
 			<button
 				type="submit"
 				disabled={isLoading}
-				className="w-full bg-blue-500 py-2 px-4 rounded hover:bg-blue-600"
+				className={`w-full bg-blue-500 py-2 px-4 rounded hover:bg-blue-600 ${
+					isLoading && "opacity-50 cursor-not-allowed"
+				}`}
 			>
 				{isLoading ? "Registering..." : "Register"}
 			</button>

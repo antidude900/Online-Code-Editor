@@ -8,11 +8,16 @@ import SendEmail from "./SendEmail.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { setCodeEditor } from "../../redux/states/CodeEditorSlice.js";
 import { useExecuteCodeMutation } from "../../redux/api/pistonApiSlice.js";
+import { Folder, LogIn } from "lucide-react";
+import Logout from "../HomeSections/Logout.jsx";
+import { Link } from "react-router-dom";
 
 export default function CodeEditor() {
 	const { code, language, input, isLoading } = useSelector(
 		(state) => state.codeEditor
 	);
+
+	const { userInfo } = useSelector((state) => state.auth);
 
 	const dispatch = useDispatch();
 	const setState = (state) => {
@@ -57,7 +62,9 @@ export default function CodeEditor() {
 				<div className="editor w-[60vw]">
 					<div className="labels flex items-center mb-5 h-[50px]">
 						<div className="label w-[100px] font-bold ml-3">
-							<img src="/logo.png" width={70} height={10} />
+							<Link to="/">
+								<img src="/logo.png" width={70} height={10} />
+							</Link>
 						</div>
 						<div className="label-buttons flex justify-between grow mr-3">
 							<LanguageMenu />
@@ -74,6 +81,19 @@ export default function CodeEditor() {
 						</div>
 					</div>
 					<EditorSection />
+				</div>
+
+				<div className="absolute top-10 right-[50px] min-h-[48px] flex items-center">
+					{userInfo ? (
+						<div className="flex gap-4">
+							<Logout />
+							<Folder className="cursor-pointer" />
+						</div>
+					) : (
+						<Link to="/" className="cursor-pointer">
+							<LogIn />
+						</Link>
+					)}
 				</div>
 
 				<InputOutputSection />
