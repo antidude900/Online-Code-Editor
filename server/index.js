@@ -1,24 +1,36 @@
-import express, { json } from "express";
-
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import pistonRoutes from "./routes/third-party/pistonRoutes.js";
-import nodemailerRoutes from "./routes/third-party/nodemailerRoutes.js";
+import cookieParser from "cookie-parser";
+import connectDB from "./config/db.js";
+
+import pistonRoutes from "./routes/pistonRoutes.js";
+import nodemailerRoutes from "./routes/nodemailerRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+
 dotenv.config();
+connectDB();
 
 const app = express();
 app.use(
 	cors({
 		origin: process.env.FRONTEND_URL,
 		methods: ["GET", "POST", "PUT", "DELETE"],
-		allowedHeaders: ["Content-Type", "Authorization"]
+		allowedHeaders: ["Content-Type", "Authorization"],
+		credentials: true,
 	})
 );
 
-app.use(json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-app.use("/api/third-party/piston", pistonRoutes);
-app.use("/api/third-party/nodemailer", nodemailerRoutes);
+app.use("/api/piston", pistonRoutes);
+app.use("/api/nodemailer", nodemailerRoutes);
+app.use("/api/users", userRoutes);
 
-const port = 3000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.get("/", (_, res) => {
+	res.send("API is running...");
+});

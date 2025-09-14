@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { PLACEHOLDER } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setCodeEditor } from "../../store/states/CodeEditor/CodeEditorSlice";
+import { setCodeEditor } from "../../redux/states/CodeEditorSlice";
 
 export default function InputOutputSection() {
 	const { output, isError, input } = useSelector((state) => state.codeEditor);
@@ -125,7 +125,7 @@ export default function InputOutputSection() {
 						)}
 					</div>
 				</div>
-			</div>	
+			</div>
 		</div>
 	);
 }

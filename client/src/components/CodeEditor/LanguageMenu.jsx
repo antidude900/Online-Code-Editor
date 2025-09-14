@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { LANGUAGES } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setCodeEditor } from "../../store/states/CodeEditor/CodeEditorSlice";
+import { setCodeEditor } from "../../redux/states/CodeEditorSlice";
 
 export default function LanguageMenu() {
 	const { language } = useSelector((state) => state.codeEditor);

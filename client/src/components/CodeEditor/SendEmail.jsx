@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useSendMailMutation } from "../../store/api/third-party/nodemailer";
+import { useSendMailMutation } from "../../redux/api/nodemailerApiSlice";
 
 export default function SendEmail() {
 	const { code, input, output } = useSelector((state) => state.codeEditor);

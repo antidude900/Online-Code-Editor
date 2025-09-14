@@ -45,12 +45,11 @@ import { useEffect, useRef } from "react";
 import "./loading-animation.css";
 import { CODE_SNIPPETS } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setCodeEditor } from "../../store/states/CodeEditor/CodeEditorSlice";
-
+import { setCodeEditor } from "../../redux/states/CodeEditorSlice";
 
 export default function EditorSection() {
 	const { language, isLoading } = useSelector((state) => state.codeEditor);
-	
+
 	const dispatch = useDispatch();
 
 	const editor = useRef();
@@ -82,7 +81,7 @@ export default function EditorSection() {
 	});
 
 	const onUpdate = EditorView.updateListener.of((v) => {
-		dispatch(setCodeEditor({code:v.state.doc.toString()}));
+		dispatch(setCodeEditor({ code: v.state.doc.toString() }));
 	});
 
 	let extensions = [
