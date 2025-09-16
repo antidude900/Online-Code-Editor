@@ -43,12 +43,11 @@ import { python } from "@codemirror/lang-python";
 import { cpp } from "@codemirror/lang-cpp";
 import { useEffect, useRef } from "react";
 import "./loading-animation.css";
-import { CODE_SNIPPETS } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
 import { setCodeEditor } from "../../redux/states/CodeEditorSlice";
 
 export default function EditorSection() {
-	const { language, isLoading } = useSelector((state) => state.codeEditor);
+	const { language, isLoading, code } = useSelector((state) => state.codeEditor);
 
 	const dispatch = useDispatch();
 
@@ -117,7 +116,7 @@ export default function EditorSection() {
 
 	useEffect(() => {
 		const startState = EditorState.create({
-			doc: CODE_SNIPPETS[language],
+			doc: code,
 			extensions,
 		});
 
