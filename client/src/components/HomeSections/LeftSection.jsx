@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const LeftSection = () => {
 	return (
-		<div className="flex relative">
+		<div className="flex relative h-full">
 			<div className="bg-[url('/assets/home-right-bg.jpg')] flex-1 bg-cover bg-center flex flex-col items-center justify-center">
 				<Link
 					to="/editor"

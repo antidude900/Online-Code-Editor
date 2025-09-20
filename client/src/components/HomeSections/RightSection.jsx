@@ -3,6 +3,7 @@ import Register from "./Register";
 import Login from "./Login";
 import { useSelector } from "react-redux";
 import Logout from "./Logout";
+import WorkspaceExplorer from "../WorkspaceExplorer";
 
 const RightSection = () => {
 	const [loginMode, setLoginMode] = useState(true);
@@ -12,7 +13,10 @@ const RightSection = () => {
 		<div className="flex-1 flex items-center justify-center">
 			{userInfo ? (
 				<>
-					<div>No Files Saved</div>
+					<div className="w-full p-8 h-[80%]">
+						<WorkspaceExplorer />
+					</div>
+
 					<div className="absolute top-4 right-4">
 						<Logout />
 					</div>

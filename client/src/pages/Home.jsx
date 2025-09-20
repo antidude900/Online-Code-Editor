@@ -4,7 +4,10 @@ import RightSection from "../components/HomeSections/RightSection";
 const Home = () => {
 	return (
 		<div className="flex h-screen">
-			<LeftSection />
+			<div className="w-[50%]">
+				<LeftSection />
+			</div>
+
 			<RightSection />
 		</div>
 	);
