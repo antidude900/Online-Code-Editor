@@ -7,13 +7,12 @@ const createUser = asyncHandler(async (req, res) => {
 	const { username, email, password } = req.body;
 
 	if (!username || !email || !password) {
-		throw new Error("Please fill all the fields");
+		return res.status(400).json({ message: "Please fill all the fields" });
 	}
 
 	const userExists = await User.findOne({ $or: [{ email }, { username }] });
 	if (userExists) {
-		res.status(400).send("User already exists");
-		return;
+		return res.status(400).json({ message: "User already exists" });
 	}
 
 	const salt = await bcrypt.genSalt(10);
@@ -30,8 +29,9 @@ const createUser = asyncHandler(async (req, res) => {
 			email: newUser.email,
 		});
 	} catch (error) {
-		res.status(400);
-		throw new Error(error, "Invalid user data");
+		return res
+			.status(400)
+			.json({ message: error?.message || "Invalid user data" });
 	}
 });
 
@@ -49,16 +49,16 @@ const loginUser = asyncHandler(async (req, res) => {
 		if (isPasswordValid) {
 			createToken(res, existingUser._id);
 
-			res.status(201).json({
+			return res.status(201).json({
 				_id: existingUser._id,
 				username: existingUser.username,
 				email: existingUser.email,
 			});
 		} else {
-			res.status(401).json({ message: "Invalid Password" });
+			return res.status(401).json({ message: "Invalid Password" });
 		}
 	} else {
-		res.status(401).json({ message: "User not found" });
+		return res.status(401).json({ message: "User not found" });
 	}
 });
 
