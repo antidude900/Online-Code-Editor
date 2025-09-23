@@ -42,13 +42,16 @@ const WorkspaceExplorer = () => {
 	async function saveNewFile(filename) {
 		if (!filename || !author) return;
 		try {
-			await createFile({
+			const newFile = await createFile({
 				filename,
 				code,
 				author: author._id,
 			}).unwrap();
 
-			console.log("sucessfully created file");
+			
+			dispatch(setFiles([...files, newFile]));
+
+			console.log("successfully created file");
 			setNewFileTemp(false);
 		} catch (err) {
 			throw new Error(err?.data?.message || err.error);
@@ -96,11 +99,15 @@ const WorkspaceExplorer = () => {
 							onClick={() => setNewFileTemp(true)}
 						/>
 						{files.map((file) => (
-							<File key={file._id} name={file.filename} />
+							<File key={file._id} file={file} />
 						))}
 
 						{newFileTemp && (
-							<File active={true} fileSave={saveNewFile} loading={isLoading} />
+							<File
+								deactivate={() => setNewFileTemp(false)}
+								saveNewFile={saveNewFile}
+								loading={isLoading}
+							/>
 						)}
 					</div>
 				)}

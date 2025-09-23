@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { PLACEHOLDER } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setCodeEditor } from "../../redux/states/CodeEditorSlice";
+import { setEditorProperty } from "../../redux/states/CodeEditorSlice";
 
 export default function InputOutputSection() {
 	const { output, isError, input } = useSelector((state) => state.codeEditor);
@@ -53,7 +53,7 @@ export default function InputOutputSection() {
 	};
 
 	const handleInputChange = (e) => {
-		dispatch(setCodeEditor({ input: e.target.value }));
+		dispatch(setEditorProperty({ property: "input", value: e.target.value }));
 		checkIfScrollable();
 	};
 

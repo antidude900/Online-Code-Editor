@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import LanguageMenu from "./LanguageMenu";
-import { CODE_SNIPPETS } from "../../constants.js";
 import EditorSection from "./EditorSection.jsx";
 import InputOutputSection from "./InputOutputSection.jsx";
 import SendEmail from "./SendEmail.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { setCodeEditor } from "../../redux/states/CodeEditorSlice.js";
+import {
+	setEditorProperty,
+	clearOutput,
+} from "../../redux/states/CodeEditorSlice.js";
 import { useExecuteCodeMutation } from "../../redux/api/pistonApiSlice.js";
 import { Folder, LogIn } from "lucide-react";
 import Logout from "../HomeSections/Logout.jsx";
@@ -20,24 +22,25 @@ export default function CodeEditor() {
 	const { userInfo } = useSelector((state) => state.auth);
 
 	const dispatch = useDispatch();
-	const setState = (state) => {
-		dispatch(setCodeEditor(state));
+
+	const updateEditorProperty = (property, value) => {
+		dispatch(setEditorProperty({ property, value }));
 	};
+
 	const [executeCode] = useExecuteCodeMutation();
 
 	useEffect(() => {
-		setState({ code: CODE_SNIPPETS[language] });
-		setState({ output: [] });
-	}, [language]);
+		dispatch(clearOutput());
+	}, [language, dispatch]);
 
 	useEffect(() => {
-		setState({ isError: null });
+		updateEditorProperty("isError", null);
 	}, [code]);
 
 	async function runCode() {
 		if (!code) return;
 		try {
-			setState({ isLoading: true });
+			updateEditorProperty("isLoading", true);
 			console.log("code", code);
 			const { run: result } = await executeCode({
 				language,
@@ -48,12 +51,12 @@ export default function CodeEditor() {
 			console.log("message", result.message);
 			const formattedOutput = result.output.replace(/\t/g, "    ");
 
-			setState({ output: formattedOutput });
-			setState({ isError: result.stderr ? true : false });
+			updateEditorProperty("output", formattedOutput);
+			updateEditorProperty("isError", result.stderr ? true : false);
 		} catch (error) {
 			console.log(error);
 		} finally {
-			setState({ isLoading: false });
+			updateEditorProperty("isLoading", false);
 		}
 	}
 	return (

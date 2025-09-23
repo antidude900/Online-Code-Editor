@@ -18,22 +18,29 @@ const CodeEditorSlice = createSlice({
 		isError: null,
 	},
 	reducers: {
-		setCodeEditor: (state, action) => {
-			Object.keys(action.payload).forEach((key) => {
-				if (key === "code") {
-					state.code = action.payload[key];
-					state.codeByLanguage[state.language] = action.payload[key];
-				} else if (key === "language") {
-					const newLanguage = action.payload[key];
-					state.language = newLanguage;
-					state.code = state.codeByLanguage[newLanguage];
-				} else {
-					state[key] = action.payload[key];
-				}
-			});
+		updateCode: (state, action) => {
+			state.code = action.payload;
+			state.codeByLanguage[state.language] = action.payload;
+		},
+
+		switchLanguage: (state, action) => {
+			const newLanguage = action.payload;
+			state.language = newLanguage;
+			state.code = state.codeByLanguage[newLanguage];
+		},
+
+		setEditorProperty: (state, action) => {
+			const { property, value } = action.payload;
+			state[property] = value;
+		},
+
+		clearOutput: (state) => {
+			state.output = [];
+			state.isError = null;
 		},
 	},
 });
 
-export const { setCodeEditor } = CodeEditorSlice.actions;
+export const { updateCode, switchLanguage, setEditorProperty, clearOutput } =
+	CodeEditorSlice.actions;
 export default CodeEditorSlice.reducer;

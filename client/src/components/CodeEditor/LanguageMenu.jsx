@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { LANGUAGES } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setCodeEditor } from "../../redux/states/CodeEditorSlice";
+import { switchLanguage } from "../../redux/states/CodeEditorSlice";
 
 export default function LanguageMenu() {
 	const { language } = useSelector((state) => state.codeEditor);
@@ -13,7 +13,7 @@ export default function LanguageMenu() {
 		if (elem) {
 			elem?.blur();
 		}
-		if (lang !== language) dispatch(setCodeEditor({ language: lang }));
+		if (lang !== language) dispatch(switchLanguage(lang));
 	};
 	return (
 		<div className="dropdown">

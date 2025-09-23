@@ -44,10 +44,12 @@ import { cpp } from "@codemirror/lang-cpp";
 import { useEffect, useRef } from "react";
 import "./loading-animation.css";
 import { useDispatch, useSelector } from "react-redux";
-import { setCodeEditor } from "../../redux/states/CodeEditorSlice";
+import { updateCode } from "../../redux/states/CodeEditorSlice";
 
 export default function EditorSection() {
-	const { language, isLoading, code } = useSelector((state) => state.codeEditor);
+	const { language, isLoading, code } = useSelector(
+		(state) => state.codeEditor
+	);
 
 	const dispatch = useDispatch();
 
@@ -64,23 +66,23 @@ export default function EditorSection() {
 			case "cpp":
 				return cpp();
 			default:
-				return javascript(); // Fallback
+				return javascript();
 		}
 	}
 
 	const customTheme = EditorView.theme({
 		".cm-selectionBackground": {
-			backgroundColor: "#4A90E2 !important", // Change this to your desired selection color
-			opacity: "0.4", // Adjust transparency if needed
+			backgroundColor: "#4A90E2 !important", 
+			opacity: "0.4", 
 		},
 		".cm-selectionMatch": {
-			backgroundColor: "#4A90E2", // Soft blue
-			opacity: "0.2", // Subtle transparency for less emphasis
+			backgroundColor: "#4A90E2", 
+			opacity: "0.2", 
 		},
 	});
 
 	const onUpdate = EditorView.updateListener.of((v) => {
-		dispatch(setCodeEditor({ code: v.state.doc.toString() }));
+		dispatch(updateCode(v.state.doc.toString()));
 	});
 
 	let extensions = [
