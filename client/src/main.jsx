@@ -16,6 +16,10 @@ const router = createBrowserRouter([
 		path: "/editor",
 		element: <Editor />,
 	},
+	{
+		path: "/editor/:fileId",
+		element: <Editor />,
+	},
 ]);
 
 createRoot(document.getElementById("root")).render(

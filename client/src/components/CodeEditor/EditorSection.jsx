@@ -44,14 +44,17 @@ import { cpp } from "@codemirror/lang-cpp";
 import { useEffect, useRef } from "react";
 import "./loading-animation.css";
 import { useDispatch, useSelector } from "react-redux";
-import { setCodeEditor } from "../../redux/states/CodeEditorSlice";
+import { updateCode } from "../../redux/states/CodeEditorSlice";
 
 export default function EditorSection() {
-	const { language, isLoading, code } = useSelector((state) => state.codeEditor);
+	const { code, language, isLoading } = useSelector(
+		(state) => state.codeEditor
+	);
 
 	const dispatch = useDispatch();
 
 	const editor = useRef();
+	const view = useRef();
 
 	function getLanguage(language) {
 		switch (language) {
@@ -64,23 +67,23 @@ export default function EditorSection() {
 			case "cpp":
 				return cpp();
 			default:
-				return javascript(); // Fallback
+				return javascript();
 		}
 	}
 
 	const customTheme = EditorView.theme({
 		".cm-selectionBackground": {
-			backgroundColor: "#4A90E2 !important", // Change this to your desired selection color
-			opacity: "0.4", // Adjust transparency if needed
+			backgroundColor: "#4A90E2 !important",
+			opacity: "0.4",
 		},
 		".cm-selectionMatch": {
-			backgroundColor: "#4A90E2", // Soft blue
-			opacity: "0.2", // Subtle transparency for less emphasis
+			backgroundColor: "#4A90E2",
+			opacity: "0.2",
 		},
 	});
 
 	const onUpdate = EditorView.updateListener.of((v) => {
-		dispatch(setCodeEditor({ code: v.state.doc.toString() }));
+		dispatch(updateCode(v.state.doc.toString()));
 	});
 
 	let extensions = [
@@ -120,13 +123,27 @@ export default function EditorSection() {
 			extensions,
 		});
 
-		const view = new EditorView({ state: startState, parent: editor.current });
-
+		view.current = new EditorView({
+			state: startState,
+			parent: editor.current,
+		});
 		return () => {
-			view.destroy();
+			view.current.destroy();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [language]);
+	}, []);
+
+	useEffect(() => {
+		if (view.current && view.current.state.doc.toString() !== code) {
+			view.current.dispatch({
+				changes: {
+					from: 0,
+					to: view.current.state.doc.length,
+					insert: code,
+				},
+			});
+		}
+	}, [code]);
 
 	return (
 		<div

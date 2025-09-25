@@ -7,16 +7,17 @@ import {
 	deleteFile,
 	renameFile,
 } from "../controllers/fileController.js";
+import authenticate from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.route("/").post(createFile).get(getAllFiles);
+router.route("/").post(authenticate, createFile).get(authenticate, getAllFiles);
 
 router
 	.route("/:id")
-	.get(getFileById)
-	.put(saveFile)
-	.delete(deleteFile)
-	.patch(renameFile);
+	.get(authenticate, getFileById)
+	.put(authenticate, saveFile)
+	.delete(authenticate, deleteFile)
+	.patch(authenticate, renameFile);
 
 export default router;

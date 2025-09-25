@@ -5,7 +5,6 @@ import {
 	useGetAllFilesQuery,
 } from "../../redux/api/fileApiSlice";
 import { setFiles } from "../../redux/states/filesSlice";
-import { selectCurrentUser } from "../../redux/states/authSlice";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -22,7 +21,7 @@ const WorkspaceExplorer = () => {
 	const files = useSelector((state) => state.files);
 	console.log("Redux files state:", files);
 	const code = useSelector((state) => state.codeEditor.codeByLanguage);
-	const author = useSelector(selectCurrentUser);
+	console.log("new code", code);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -40,15 +39,17 @@ const WorkspaceExplorer = () => {
 	}, [error]);
 
 	async function saveNewFile(filename) {
-		if (!filename || !author) return;
+		if (!filename) return;
+
 		try {
-			await createFile({
+			const newFile = await createFile({
 				filename,
 				code,
-				author: author._id,
 			}).unwrap();
 
-			console.log("sucessfully created file");
+			dispatch(setFiles([...files, newFile]));
+
+			console.log("successfully created file");
 			setNewFileTemp(false);
 		} catch (err) {
 			throw new Error(err?.data?.message || err.error);
@@ -82,11 +83,15 @@ const WorkspaceExplorer = () => {
 						</div>
 
 						{newFileTemp && (
-							<File active={true} fileSave={saveNewFile} loading={isLoading} />
+							<File
+								active={true}
+								saveNewFile={saveNewFile}
+								loading={isLoading}
+							/>
 						)}
 					</div>
 				) : (
-					<div className="grid grid-cols-4 gap-x-10 gap-y-10 justify-items-center place-items-start">
+					<div className="grid grid-cols-3 gap-x-10 gap-y-10 justify-items-center place-items-start">
 						<FilePlus
 							size={75}
 							style={{ strokeDasharray: "2 2" }}
@@ -96,11 +101,15 @@ const WorkspaceExplorer = () => {
 							onClick={() => setNewFileTemp(true)}
 						/>
 						{files.map((file) => (
-							<File key={file._id} name={file.filename} />
+							<File key={file._id} file={file} />
 						))}
 
 						{newFileTemp && (
-							<File active={true} fileSave={saveNewFile} loading={isLoading} />
+							<File
+								deactivate={() => setNewFileTemp(false)}
+								saveNewFile={saveNewFile}
+								loading={isLoading}
+							/>
 						)}
 					</div>
 				)}
