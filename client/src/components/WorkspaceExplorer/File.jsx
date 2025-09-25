@@ -19,28 +19,31 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 
 	const handleKeyDown = (e) => {
 		if (e.key === "Enter") {
+			setName(e.target.value.trim());
 			handleSubmit(e);
 		}
 		if (e.key === "Escape") {
 			inputRef.current?.blur();
 		}
 	};
+
 	function validation() {
 		return {
 			required: true,
 			minLength: 1,
-			maxLength: 50,
-			pattern: "^[a-zA-Z0-9_-]+$",
+			maxLength: 20,
+			// pattern: "^[a-zA-Z0-9_s-]+$",
 			title:
-				"File name must be 1-50 characters and contain only letters, numbers, hyphens, and underscores",
+				"File name must be 1-20 characters and contain only letters, numbers, spaces, hyphens, and underscores",
 		};
 	}
+
 	async function handleSubmit(e) {
 		e.preventDefault();
 		const form = e.target;
 
 		if (file && name === file.filename) {
-			inputRef.current?.blur();
+			form.blur();
 			return;
 		}
 
@@ -49,7 +52,7 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 			return;
 		}
 
-		const pattern = /^[a-zA-Z0-9_-]+$/; //somehow the pattern validation is not working, so manually working with this
+		const pattern = /^[a-zA-Z0-9_\s-]+$/; //somehow the pattern validation is not working, so manually working with this
 		if (!pattern.test(name)) {
 			form.setCustomValidity(
 				"File name must contain only letters, numbers, hyphens, and underscores"
@@ -73,7 +76,7 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 			} else {
 				saveNewFile?.(name);
 			}
-			inputRef.current?.blur();
+			form.blur();
 		} catch (error) {
 			form.setCustomValidity(error?.data?.message || "An error occurred");
 			form.reportValidity();
@@ -113,7 +116,7 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 				onKeyDown={handleKeyDown}
 				onBlur={() => (file ? setName(file.filename) : deactivate?.())}
 				size={name.length || 1}
-				className="bg-transparent text-center focus:border-b border-gray-400 focus:outline-none"
+				className="bg-transparent text-center focus:border-b border-gray-400 focus:outline-none text-sm"
 				{...validation()}
 			/>
 		</div>

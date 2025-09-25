@@ -9,7 +9,7 @@ const CODE_SNIPPETS = {
 
 const fileSchema = mongoose.Schema(
 	{
-		filename: { type: String, required: true, unique: true },
+		filename: { type: String, required: true },
 		code: {
 			type: Map,
 			of: String,
@@ -28,6 +28,8 @@ const fileSchema = mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
+fileSchema.index({ filename: 1, author: 1 }, { unique: true });
 
 const File = mongoose.model("File", fileSchema);
 export default File;
