@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LanguageMenu from "./LanguageMenu";
 import EditorSection from "./EditorSection.jsx";
 import InputOutputSection from "./InputOutputSection.jsx";
@@ -12,12 +12,15 @@ import {
 	resetToInitialState,
 } from "../../redux/states/CodeEditorSlice.js";
 import { useExecuteCodeMutation } from "../../redux/api/pistonApiSlice.js";
-import { Folder, LogIn } from "lucide-react";
+import { LogIn } from "lucide-react";
 import Logout from "../HomeSections/Logout.jsx";
 
 import { Link, useParams } from "react-router-dom";
 import { useGetFileByIdQuery } from "../../redux/api/fileApiSlice.js";
 import SaveButton from "./SaveButton.jsx";
+import AuthForm from "../HomeSections/AuthForm.jsx";
+import Title from "./Title.jsx";
+import FilesShow from "./FilesShow.jsx";
 
 export default function CodeEditor() {
 	const { code, language, input, isLoading, codeByLanguage } = useSelector(
@@ -34,31 +37,40 @@ export default function CodeEditor() {
 
 	const [executeCode] = useExecuteCodeMutation();
 	const { fileId } = useParams();
-	console.log("fileId", fileId);
 
 	const {
 		data: file,
 		error: fileFetchError,
 		isLoading: loadingFile,
+		refetch: refetchFile,
 	} = useGetFileByIdQuery(fileId, {
 		skip: !fileId,
 	});
-	console.log("fetched file", file, fileFetchError);
+	const [open, setOpen] = useState(false);
+
+	useEffect(() => {
+		setOpen(false);
+		refetchFile();
+	}, [fileId]);
 
 	useEffect(() => {
 		if (!fileId) {
 			dispatch(resetToInitialState());
 		} else if (!file || fileFetchError) {
 			console.log("File not fetched", fileFetchError);
+			if (userInfo && fileFetchError?.data.message === "Not Authenticated") {
+				console.log("refetching");
+				refetchFile();
+			}
 		} else {
 			console.log("successfully fetched file", file);
 			dispatch(updateAllCode(file.code));
 		}
-	}, [file, fileId]);
+	}, [file, fileId, userInfo]);
 
 	useEffect(() => {
 		dispatch(clearOutput());
-	}, [language, dispatch]);
+	}, [language]);
 
 	useEffect(() => {
 		updateEditorProperty("isError", null);
@@ -91,14 +103,16 @@ export default function CodeEditor() {
 	if (fileFetchError && fileFetchError.data.message === "Not Authenticated") {
 		return (
 			<div className="flex items-center justify-center h-full">
-				<h1 className="text-2xl text-red-500">Not Authenticated!</h1>
+				<div className="bg-[#282A36] p-8 rounded-2xl shadow-xl shadow-gray-900 w-full max-w-sm">
+					<AuthForm />
+				</div>
 			</div>
 		);
 	}
 	if (fileFetchError && fileFetchError.data.message === "Not Authorized") {
 		return (
 			<div className="flex items-center justify-center h-full">
-				<h1 className="text-2xl text-red-500">Not Authorized!</h1>
+				<h1 className="text-4xl font-bold text-red-500">Not Authorized!</h1>
 			</div>
 		);
 	}
@@ -106,7 +120,15 @@ export default function CodeEditor() {
 	if (fileFetchError && fileFetchError.data.message === "File Not Found") {
 		return (
 			<div className="flex items-center justify-center h-full">
-				<h1 className="text-2xl text-red-500">File Not Found!</h1>
+				<h1 className="text-4xl font-bold text-red-500">File Not Found!</h1>
+			</div>
+		);
+	}
+
+	if (fileFetchError && fileFetchError.data.message === "Error Occurred") {
+		return (
+			<div className="flex items-center justify-center h-full">
+				<h1 className="text-4xl font-bold text-red-500">Error Occurred!</h1>
 			</div>
 		);
 	}
@@ -121,6 +143,8 @@ export default function CodeEditor() {
 								<img src="/logo.png" width={70} height={10} />
 							</Link>
 						</div>
+						{file && <Title file={file} />}
+
 						<div className="label-buttons flex justify-between grow mr-3">
 							<LanguageMenu />
 
@@ -144,12 +168,32 @@ export default function CodeEditor() {
 					{userInfo ? (
 						<div className="flex gap-4">
 							<Logout />
-							<Folder className="cursor-pointer" />
+							<FilesShow />
 						</div>
 					) : (
-						<Link to="/" className="cursor-pointer">
-							<LogIn />
-						</Link>
+						<>
+							<LogIn className="cursor-pointer" onClick={() => setOpen(true)} />
+
+							{open && (
+								<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+									<div className="bg-[#282A36] p-8 rounded-2xl shadow-xl shadow-gray-900 w-full max-w-sm relative">
+										<button
+											onClick={() => setOpen(false)}
+											className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold"
+										>
+											×
+										</button>
+
+										<AuthForm />
+									</div>
+
+									<div
+										className="absolute inset-0 -z-10"
+										onClick={() => setOpen(false)}
+									/>
+								</div>
+							)}
+						</>
 					)}
 				</div>
 
@@ -158,4 +202,3 @@ export default function CodeEditor() {
 		</>
 	);
 }
-// code={code} input={input} output={output.join("\n")}

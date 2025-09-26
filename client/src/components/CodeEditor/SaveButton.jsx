@@ -5,16 +5,14 @@ import {
 } from "../../redux/api/fileApiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Login from "../HomeSections/Login";
-import Register from "../HomeSections/Register";
 import { setFiles } from "../../redux/states/filesSlice";
+import AuthForm from "../HomeSections/AuthForm";
 
 // eslint-disable-next-line react/prop-types
 export default function SaveButton({ fileId, codeByLanguage }) {
 	const [saveFile, { isLoading: saving }] = useSaveFileMutation();
 	const [createFile, { isLoading: creating }] = useCreateFileMutation();
 	const [open, setOpen] = useState(false);
-	const [loginMode, setLoginMode] = useState(true);
 	const { userInfo } = useSelector((state) => state.auth);
 	const files = useSelector((state) => state.files);
 	const code = useSelector((state) => state.codeEditor.codeByLanguage);
@@ -106,7 +104,6 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 							setOpen(true);
 						}
 					} else {
-						// User not logged in - open modal for login
 						setOpen(true);
 					}
 				}}
@@ -125,15 +122,7 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 						</button>
 
 						{!userInfo ? (
-							<>
-								{loginMode ? <Login /> : <Register />}
-								<div
-									onClick={() => setLoginMode(!loginMode)}
-									className="text-sm font-medium text-blue-500 hover:text-blue-700 underline cursor-pointer mt-6 text-center"
-								>
-									{loginMode ? "Create an Account" : "Already have an account"}
-								</div>
-							</>
+							<AuthForm />
 						) : (
 							<div>
 								<div className="text-2xl font-bold mb-6">

@@ -1,21 +1,19 @@
-import { useEffect, useRef, useState } from "react";
-import { FileCode, Trash } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { useRenameFileMutation } from "../../redux/api/fileApiSlice";
-import { Link } from "react-router-dom";
 
-const File = ({ file, deactivate, saveNewFile, loading }) => {
+const Title = ({ file }) => {
 	const [name, setName] = useState(file?.filename || "");
+
+	useEffect(() => {
+		if (file?.filename) {
+			setName(file.filename);
+		}
+	}, [file?.filename]);
 	const files = useSelector((state) => state.files);
 	const [renameFile, { isLoading: renameLoading }] = useRenameFileMutation();
 	const inputRef = useRef(null);
-
-	useEffect(() => {
-		if (!file) {
-			inputRef.current?.focus();
-		}
-	}, [file]);
 
 	const handleKeyDown = (e) => {
 		if (e.key === "Enter") {
@@ -70,11 +68,7 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 		}
 
 		try {
-			if (file) {
-				await renameFile({ id: file._id, data: { filename: name } }).unwrap();
-			} else {
-				saveNewFile?.(name);
-			}
+			await renameFile({ id: file._id, data: { filename: name } }).unwrap();
 			form.blur();
 		} catch (error) {
 			form.setCustomValidity(error?.data?.message || "An error occurred");
@@ -83,48 +77,25 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 	}
 
 	return (
-		<div className="relative group flex flex-col items-center cursor-pointer">
-			<Link
-				to={file && !loading && !renameLoading ? `/editor/${file._id}` : "#"}
-			>
-				<FileCode
-					size={75}
-					strokeWidth={1}
-					className={`group-hover:stroke-cyan-400 ${
-						!file && "cursor-not-allowed"
-					} ${
-						loading ||
-						(renameLoading && "animate-pulse text-gray-900 cursor-not-allowed")
-					}
-				}`}
-				/>
-			</Link>
-
-			<div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 flex flex-col gap-1">
-				<Trash size={15} className="text-red-500" />
-			</div>
-
+		<div className="relative flex flex-col items-center cursor-pointer mr-5">
 			<input
 				ref={inputRef}
 				value={name}
+				disabled={renameLoading}
 				onChange={(e) => {
 					setName(e.target.value);
 					e.target.setCustomValidity("");
 				}}
-				disabled={loading || renameLoading}
 				onKeyDown={handleKeyDown}
-				onBlur={() => (file ? setName(file.filename) : deactivate?.())}
+				onBlur={() => setName(file.filename)}
 				size={name.length || 1}
-				className="bg-transparent text-center focus:border-b border-gray-400 focus:outline-none text-sm"
+				className="bg-transparent text-center border-2 rounded-lg border-gray-400 focus:outline-none text-sm p-2"
 				{...validation()}
 			/>
 		</div>
 	);
 };
-File.propTypes = {
+Title.propTypes = {
 	file: PropTypes.object,
-	deactivate: PropTypes.func,
-	saveNewFile: PropTypes.func,
-	loading: PropTypes.bool,
 };
-export default File;
+export default Title;

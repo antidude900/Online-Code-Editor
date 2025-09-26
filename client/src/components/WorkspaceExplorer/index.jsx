@@ -8,7 +8,8 @@ import { setFiles } from "../../redux/states/filesSlice";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const WorkspaceExplorer = () => {
+// eslint-disable-next-line react/prop-types
+const WorkspaceExplorer = ({ currentFileId }) => {
 	const [newFileTemp, setNewFileTemp] = useState(false);
 	const [createFile, { isLoading }] = useCreateFileMutation();
 	const {
@@ -18,7 +19,10 @@ const WorkspaceExplorer = () => {
 	} = useGetAllFilesQuery();
 	console.log("files", allFiles);
 	console.log("Files loading:", filesLoading);
-	const files = useSelector((state) => state.files);
+	const tempFiles = useSelector((state) => state.files);
+	const files = currentFileId
+		? tempFiles.filter((file) => file._id !== currentFileId)
+		: tempFiles;
 	console.log("Redux files state:", files);
 	const code = useSelector((state) => state.codeEditor.codeByLanguage);
 	console.log("new code", code);
