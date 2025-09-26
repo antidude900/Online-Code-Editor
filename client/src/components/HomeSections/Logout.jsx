@@ -12,6 +12,7 @@ const Logout = () => {
 		try {
 			await logoutApi().unwrap();
 			dispatch(logout());
+			window.location.reload();
 		} catch (error) {
 			console.error(error);
 		}

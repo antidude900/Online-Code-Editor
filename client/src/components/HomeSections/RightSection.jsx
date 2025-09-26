@@ -1,12 +1,9 @@
-import { useState } from "react";
-import Register from "./Register";
-import Login from "./Login";
 import { useSelector } from "react-redux";
 import Logout from "./Logout";
 import WorkspaceExplorer from "../WorkspaceExplorer";
+import AuthForm from "./AuthForm";
 
 const RightSection = () => {
-	const [loginMode, setLoginMode] = useState(true);
 	const { userInfo } = useSelector((state) => state.auth);
 
 	return (
@@ -23,13 +20,7 @@ const RightSection = () => {
 				</>
 			) : (
 				<div className="bg-[#282A36] p-8 rounded-2xl shadow-xl shadow-gray-900 w-full max-w-sm">
-					{loginMode ? <Login /> : <Register />}
-					<div
-						onClick={() => setLoginMode(!loginMode)}
-						className="text-sm font-medium text-blue-500 hover:text-blue-700 underline cursor-pointer mt-6 text-center"
-					>
-						{loginMode ? "Create an Account" : "Already have an account"}
-					</div>
+					<AuthForm />
 				</div>
 			)}
 		</div>

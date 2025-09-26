@@ -53,11 +53,16 @@ export const getFileById = async (req, res) => {
 };
 
 export const saveFile = async (req, res) => {
+	const user = req.user;
 	try {
 		console.log("body", req.body);
 		const code = req.body;
 
 		const file = await File.findById(req.params.id);
+
+		if (user._id.toString() !== file.author.toString()) {
+			return res.status(403).json({ message: "Not Authorized" });
+		}
 		if (!file) {
 			return res.status(404).json({ message: "File not found" });
 		}

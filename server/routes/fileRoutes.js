@@ -8,6 +8,7 @@ import {
 	renameFile,
 } from "../controllers/fileController.js";
 import authenticate from "../middlewares/authMiddleware.js";
+import fileMiddleware from "../middlewares/fileMiddleware.js";
 
 const router = express.Router();
 
@@ -15,9 +16,9 @@ router.route("/").post(authenticate, createFile).get(authenticate, getAllFiles);
 
 router
 	.route("/:id")
-	.get(authenticate, getFileById)
-	.put(authenticate, saveFile)
-	.delete(authenticate, deleteFile)
-	.patch(authenticate, renameFile);
+	.get(authenticate, fileMiddleware, getFileById)
+	.put(authenticate, fileMiddleware, saveFile)
+	.delete(authenticate, fileMiddleware, deleteFile)
+	.patch(authenticate, fileMiddleware, renameFile);
 
 export default router;
