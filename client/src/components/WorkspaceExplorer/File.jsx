@@ -1,15 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import { FileCode, Trash } from "lucide-react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
-import { useRenameFileMutation } from "../../redux/api/fileApiSlice";
+import { useSelector, useDispatch } from "react-redux";
+import {
+	useDeleteFileMutation,
+	useRenameFileMutation,
+} from "../../redux/api/fileApiSlice";
+import { setFiles } from "../../redux/states/filesSlice";
 import { Link } from "react-router-dom";
 
 const File = ({ file, deactivate, saveNewFile, loading }) => {
 	const [name, setName] = useState(file?.filename || "");
 	const files = useSelector((state) => state.files);
+	const dispatch = useDispatch();
 	const [renameFile, { isLoading: renameLoading }] = useRenameFileMutation();
+	const [deleteFile, { isLoading: deletingFile }] = useDeleteFileMutation();
+	const [fileLoading, setFileLoading] = useState(false);
 	const inputRef = useRef(null);
+
+	useEffect(() => {
+		if (loading || renameLoading || deletingFile) {
+			setFileLoading(true);
+		}
+	}, [loading, renameLoading, deletingFile]);
 
 	useEffect(() => {
 		if (!file) {
@@ -82,25 +95,34 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 		}
 	}
 
+	async function handleDelete() {
+		try {
+			await deleteFile(file._id).unwrap();
+			const updatedFiles = files.filter((f) => f._id !== file._id);
+			dispatch(setFiles(updatedFiles));
+		} catch (error) {
+			console.error("Error deleting file:", error);
+		}
+	}
+
 	return (
 		<div className="relative group flex flex-col items-center cursor-pointer">
-			<Link
-				to={file && !loading && !renameLoading ? `/editor/${file._id}` : "#"}
-			>
+			<Link to={file && !fileLoading ? `/editor/${file._id}` : "#"}>
 				<FileCode
 					size={75}
 					strokeWidth={1}
 					className={`group-hover:stroke-cyan-400 ${
 						!file && "cursor-not-allowed"
-					} ${
-						loading ||
-						(renameLoading && "animate-pulse text-gray-900 cursor-not-allowed")
-					}
+					} ${fileLoading && "animate-pulse text-gray-900 cursor-not-allowed"}
 				}`}
 				/>
 			</Link>
 
-			<div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 flex flex-col gap-1">
+			<div
+				className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 flex flex-col gap-1"
+				disabled={fileLoading}
+				onClick={handleDelete}
+			>
 				<Trash size={15} className="text-red-500" />
 			</div>
 
@@ -111,7 +133,7 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 					setName(e.target.value);
 					e.target.setCustomValidity("");
 				}}
-				disabled={loading || renameLoading}
+				disabled={fileLoading}
 				onKeyDown={handleKeyDown}
 				onBlur={() => (file ? setName(file.filename) : deactivate?.())}
 				size={name.length || 1}

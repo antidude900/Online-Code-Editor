@@ -82,7 +82,7 @@ export default function InputOutputSection() {
 						onChange={handleInputChange}
 					/>
 					{isScrollableUp && (
-						<div className="absolute top-[-23px] right-[260px] text-white opacity-50 font-bold">
+						<div className="absolute top-[-23px] right-[50%] text-white opacity-50 font-bold">
 							<span
 								className="text-xl border-4 border-gray-500 rounded-full cursor-pointer p-[1px] leading-none inline-block "
 								onClick={scrollToTop}
@@ -92,7 +92,7 @@ export default function InputOutputSection() {
 						</div>
 					)}
 					{isScrollableDown && (
-						<div className="absolute top-[110px] right-[260px] text-white opacity-50 font-bold">
+						<div className="absolute top-[110px] right-[50%] text-white opacity-50 font-bold">
 							<span
 								className="text-xl border-4 border-gray-500 rounded-full cursor-pointer p-[1px] leading-none inline-block"
 								onClick={scrollToBottom}

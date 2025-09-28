@@ -9,7 +9,7 @@ const Login = () => {
 
 	const dispatch = useDispatch();
 
-	const [login, { isLoading }] = useLoginMutation();
+	const [login, { isLoading, error: LoginError }] = useLoginMutation();
 
 	function validation(type) {
 		switch (type) {
@@ -75,6 +75,12 @@ const Login = () => {
 					{...validation("password")}
 				/>
 			</div>
+
+			{LoginError && LoginError.data.message === "Incorrect Password" && (
+				<div className="text-red-500 text-sm mb-4">
+					{LoginError?.data?.message || "Incorrect Password"}
+				</div>
+			)}
 			<button
 				type="submit"
 				disabled={isLoading}

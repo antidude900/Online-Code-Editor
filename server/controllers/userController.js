@@ -55,7 +55,7 @@ const loginUser = asyncHandler(async (req, res) => {
 				email: existingUser.email,
 			});
 		} else {
-			return res.status(401).json({ message: "Invalid Password" });
+			return res.status(401).json({ message: "Incorrect Password" });
 		}
 	} else {
 		return res.status(401).json({ message: "User not found" });

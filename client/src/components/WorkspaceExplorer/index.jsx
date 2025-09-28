@@ -29,7 +29,7 @@ const WorkspaceExplorer = ({ currentFileId }) => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (allFiles) {
+		if (allFiles && tempFiles.length === 0) {
 			console.log("Setting files in Redux:", allFiles);
 			dispatch(setFiles(allFiles));
 		}
@@ -51,7 +51,7 @@ const WorkspaceExplorer = ({ currentFileId }) => {
 				code,
 			}).unwrap();
 
-			dispatch(setFiles([...files, newFile]));
+			dispatch(setFiles((prev) => [...prev, newFile]));
 
 			console.log("successfully created file");
 			setNewFileTemp(false);
