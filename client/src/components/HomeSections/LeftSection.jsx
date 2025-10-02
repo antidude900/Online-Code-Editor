@@ -12,7 +12,7 @@ const LeftSection = () => {
 				</Link>
 				<div className="my-[20px] py-[20px] font-black text-lg decoration-cyan-500 font-mono w-[60%] text-center bg-black/50">
 					YOU CAN DIRECTLY START CODING! BUT FOR SAVING FILES, LOGIN IS
-					REQUIRED😁
+					REQUIRED
 				</div>
 				<div></div>
 			</div>

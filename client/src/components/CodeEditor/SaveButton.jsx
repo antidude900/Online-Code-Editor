@@ -1,24 +1,54 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
 	useCreateFileMutation,
 	useSaveFileMutation,
+	useGetFileByIdQuery,
 } from "../../redux/api/fileApiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFiles } from "../../redux/states/filesSlice";
 import AuthForm from "../HomeSections/AuthForm";
+import { Check, Loader2 } from "lucide-react";
 
 // eslint-disable-next-line react/prop-types
 export default function SaveButton({ fileId, codeByLanguage }) {
 	const [saveFile, { isLoading: saving }] = useSaveFileMutation();
 	const [createFile, { isLoading: creating }] = useCreateFileMutation();
 	const [open, setOpen] = useState(false);
+	const [lastSavedCode, setLastSavedCode] = useState(null);
 	const { userInfo } = useSelector((state) => state.auth);
 	const files = useSelector((state) => state.files);
 	const code = useSelector((state) => state.codeEditor.codeByLanguage);
 	const [name, setName] = useState("");
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const { data: currentFile } = useGetFileByIdQuery(fileId, {
+		skip: !fileId,
+	});
+
+	const hasUnsavedChanges =
+		fileId && currentFile && lastSavedCode
+			? JSON.stringify(codeByLanguage) !== JSON.stringify(lastSavedCode)
+			: fileId && currentFile
+			? JSON.stringify(codeByLanguage) !== JSON.stringify(currentFile.code)
+			: false;
+
+	useEffect(() => {
+		if (currentFile && currentFile.code) {
+			setLastSavedCode(currentFile.code);
+		}
+	}, [currentFile]);
+
+	// Get save button state
+	const getSaveButtonState = () => {
+		if (saving) return "saving";
+		if (!fileId) return "new"; // No file ID means new file
+		if (hasUnsavedChanges) return "unsaved";
+		return "saved";
+	};
+
+	const saveButtonState = getSaveButtonState();
 
 	async function saveNewFile(filename) {
 		if (!filename) return;
@@ -87,16 +117,46 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 		}
 	}
 
+	// Render button content based on state
+	const renderButtonContent = () => {
+		switch (saveButtonState) {
+			case "saving":
+				return (
+					<>
+						<Loader2 size={20} className="animate-spin text-yellow-500" />
+						<span>Saving</span>
+					</>
+				);
+			case "saved":
+				return (
+					<>
+						<Check size={20} className="text-green-500" />
+						<span>Saved</span>
+					</>
+				);
+			case "unsaved":
+				return (
+					<>
+						<Check size={20} className="text-gray-400" />
+						<span>Save</span>
+					</>
+				);
+			default:
+				return <span>Save</span>;
+		}
+	};
+
 	return (
 		<div>
 			<button
-				className="btn"
+				className="btn flex items-center"
 				disabled={saving}
 				onClick={async () => {
 					if (userInfo) {
 						if (fileId) {
 							try {
 								await saveFile({ id: fileId, data: codeByLanguage });
+								setLastSavedCode(codeByLanguage);
 							} catch (err) {
 								console.log(err);
 							}
@@ -108,7 +168,7 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 					}
 				}}
 			>
-				Save
+				{renderButtonContent()}
 			</button>
 
 			{open && (

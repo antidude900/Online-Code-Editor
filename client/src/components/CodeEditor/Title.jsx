@@ -89,7 +89,7 @@ const Title = ({ file }) => {
 				onKeyDown={handleKeyDown}
 				onBlur={() => setName(file.filename)}
 				size={name.length || 1}
-				className="bg-transparent text-center border-2 rounded-lg border-gray-400 focus:outline-none text-sm p-2"
+				className="bg-transparent text-center border-2 rounded-lg border-gray-700 focus:outline-none text-sm p-2"
 				{...validation()}
 			/>
 		</div>

@@ -50,7 +50,7 @@ export default function CodeEditor() {
 
 	useEffect(() => {
 		setOpen(false);
-		refetchFile();
+		if (fileId) refetchFile();
 	}, [fileId]);
 
 	useEffect(() => {
