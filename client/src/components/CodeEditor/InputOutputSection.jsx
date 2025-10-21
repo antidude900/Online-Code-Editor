@@ -58,7 +58,7 @@ export default function InputOutputSection() {
 	};
 
 	return (
-		<div className="input-output w-[40vw] ml-10 h-[80vh] flex flex-col mt-[65px]">
+		<div className="input-output flex flex-col h-full">
 			<div className="input-box h-[30%] mb-[20px] flex flex-col">
 				<div className="text-[#A6ADBB] w-[100px] text-[20px] font-bold h-[20%]">
 					Input

@@ -51,7 +51,7 @@ const WorkspaceExplorer = ({ currentFileId }) => {
 				code,
 			}).unwrap();
 
-			dispatch(setFiles((prev) => [...prev, newFile]));
+			dispatch(setFiles([...tempFiles, newFile]));
 
 			console.log("successfully created file");
 			setNewFileTemp(false);
@@ -65,8 +65,8 @@ const WorkspaceExplorer = ({ currentFileId }) => {
 	}
 
 	return (
-		<div className="border-2 border-gray-600 border-dashed w-full rounded-lg h-full p-8">
-			<div className="overflow-auto h-full px-2 py-2">
+		<div className="border-2 border-gray-600 border-dashed w-full rounded-lg h-full p-4">
+			<div className="overflow-y-auto overflow-x-hidden h-full">
 				{!files.length ? (
 					<div className="flex h-full justify-center items-center">
 						<div className="flex flex-col items-center cursor-pointer">
@@ -95,7 +95,7 @@ const WorkspaceExplorer = ({ currentFileId }) => {
 						)}
 					</div>
 				) : (
-					<div className="grid grid-cols-3 gap-x-10 gap-y-10 justify-items-center place-items-start">
+					<div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 md:grid-cols-3 justify-items-center place-items-start">
 						<FilePlus
 							size={75}
 							style={{ strokeDasharray: "2 2" }}

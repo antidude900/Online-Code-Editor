@@ -151,7 +151,7 @@ export default function EditorSection() {
 				isLoading ? "card" : "border-4 rounded-[10px] border-gray-700"
 			} h-[80vh] `}
 		>
-			<div className="bg-[#282A36] h-full z-1 p-5 border border-transparent rounded-[10px]	">
+			<div className="bg-[#282A36] h-full z-1 p-2 border border-transparent rounded-[10px]	">
 				<div ref={editor} className="h-full"></div>
 			</div>
 		</div>
