@@ -3,12 +3,14 @@ import RightSection from "../components/HomeSections/RightSection";
 
 const Home = () => {
 	return (
-		<div className="flex h-screen">
-			<div className="w-[50%]">
+		<div className="flex flex-col lg:flex-row">
+			<div className="w-full lg:w-[50%]">
 				<LeftSection />
 			</div>
 
-			<RightSection />
+			<div className="[@media(max-width:270px)]:hidden">
+				<RightSection />
+			</div>
 		</div>
 	);
 };

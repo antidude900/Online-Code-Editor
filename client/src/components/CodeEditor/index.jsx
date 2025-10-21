@@ -135,26 +135,24 @@ export default function CodeEditor() {
 
 	return (
 		<>
-			<div className="whole-editor flex">
-				<div className="editor w-[60vw]">
-					<div className="labels flex items-center mb-5 h-[50px]">
-						<div className="label w-[100px] font-bold ml-3">
+			<div className="whole-editor relative flex flex-col lg:flex-row w-100%">
+				<div className="editor w-100% lg:w-[60vw]">
+					<div className="labels flex flex-col sm:flex-row items-start sm:items-center mb-5 gap-2 sm:gap-0 min-h-[50px]">
+						<div className="label w-full sm:w-[100px] font-bold ml-3 flex justify-between sm:justify-start items-center">
 							<Link to="/">
-								<img src="/logo.png" width={70} height={10} />
+								<img src="/logo.png" className="w-16 h-auto sm:w-[70px]" />
 							</Link>
 						</div>
 						{file && <Title file={file} />}
 
-						<div className="label-buttons flex justify-between grow mr-3">
+						<div className="label-buttons flex flex-wrap sm:flex-nowrap justify-between grow gap-2 w-full sm:w-auto">
 							<LanguageMenu />
-
 							<SaveButton fileId={fileId} codeByLanguage={codeByLanguage} />
-
 							<SendEmail />
 							<button
-								className={`${
+								className={`btn ${
 									isLoading ? "cursor-not-allowed opacity-50" : ""
-								} btn`}
+								}`}
 								onClick={runCode}
 							>
 								Run
@@ -164,11 +162,13 @@ export default function CodeEditor() {
 					<EditorSection />
 				</div>
 
-				<div className="absolute top-10 right-[50px] min-h-[48px] flex items-center">
+				<div className="absolute -top-10 lg:top-0 right-0 min-h-[48px] flex items-center">
 					{userInfo ? (
 						<div className="flex gap-4">
 							<Logout />
-							<FilesShow />
+							<div className="[@media(max-width:450px)]:hidden">
+								<FilesShow />
+							</div>
 						</div>
 					) : (
 						<>
@@ -197,7 +197,9 @@ export default function CodeEditor() {
 					)}
 				</div>
 
-				<InputOutputSection />
+				<div className="w-100% lg:w-[40vw] lg:ml-10 h-[80vh] mt-[65px]">
+					<InputOutputSection />
+				</div>
 			</div>
 		</>
 	);

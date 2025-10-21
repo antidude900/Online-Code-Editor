@@ -21,7 +21,7 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 	useEffect(() => {
 		if (loading || renameLoading || deletingFile) {
 			setFileLoading(true);
-		}
+		} else setFileLoading(false);
 	}, [loading, renameLoading, deletingFile]);
 
 	useEffect(() => {

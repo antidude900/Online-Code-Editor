@@ -7,10 +7,10 @@ const RightSection = () => {
 	const { userInfo } = useSelector((state) => state.auth);
 
 	return (
-		<div className="flex-1 flex items-center justify-center">
+		<div className="lg:flex-1 flex items-center justify-center h-screen">
 			{userInfo ? (
 				<>
-					<div className="w-full p-8 h-[80%]">
+					<div className="w-full p-8 h-screen">
 						<WorkspaceExplorer />
 					</div>
 

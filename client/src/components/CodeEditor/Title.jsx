@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRenameFileMutation } from "../../redux/api/fileApiSlice";
+import { setFiles } from "../../redux/states/filesSlice";
 
 const Title = ({ file }) => {
 	const [name, setName] = useState(file?.filename || "");
@@ -14,6 +15,7 @@ const Title = ({ file }) => {
 	const files = useSelector((state) => state.files);
 	const [renameFile, { isLoading: renameLoading }] = useRenameFileMutation();
 	const inputRef = useRef(null);
+	const dispatch = useDispatch();
 
 	const handleKeyDown = (e) => {
 		if (e.key === "Enter") {
@@ -69,6 +71,11 @@ const Title = ({ file }) => {
 
 		try {
 			await renameFile({ id: file._id, data: { filename: name } }).unwrap();
+			dispatch(
+				setFiles(
+					files.map((f) => (f._id === file._id ? { ...f, filename: name } : f))
+				)
+			);
 			form.blur();
 		} catch (error) {
 			form.setCustomValidity(error?.data?.message || "An error occurred");
