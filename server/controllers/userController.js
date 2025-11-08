@@ -1,9 +1,8 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
-import asyncHandler from "../middlewares/asyncHandler.js";
 import createToken from "../utils/createToken.js";
 
-const createUser = asyncHandler(async (req, res) => {
+const createUser = async (req, res) => {
 	const { username, email, password } = req.body;
 
 	if (!username || !email || !password) {
@@ -33,9 +32,9 @@ const createUser = asyncHandler(async (req, res) => {
 			.status(400)
 			.json({ message: error?.message || "Invalid user data" });
 	}
-});
+};
 
-const loginUser = asyncHandler(async (req, res) => {
+const loginUser = async (req, res) => {
 	const { email, password } = req.body;
 
 	const existingUser = await User.findOne({ email });
@@ -60,20 +59,20 @@ const loginUser = asyncHandler(async (req, res) => {
 	} else {
 		return res.status(401).json({ message: "User not found" });
 	}
-});
+};
 
-const logoutCurrentUser = asyncHandler(async (req, res) => {
+const logoutCurrentUser = async (req, res) => {
 	res.cookie("jwt", "", {
 		httpOnly: true,
 		expires: new Date(0),
 	});
 
 	res.status(200).json({ message: "Logged out successfully" });
-});
+};
 
-const getAllUsers = asyncHandler(async (req, res) => {
+const getAllUsers = async (req, res) => {
 	const users = await User.find({});
 	res.json(users);
-});
+};
 
 export { createUser, loginUser, logoutCurrentUser, getAllUsers };

@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import asyncHandler from "./asyncHandler.js";
 
-const authenticate = asyncHandler(async (req, res, next) => {
+const authenticate = async (req, res, next) => {
 	let token;
 
 	token = req.cookies.jwt;
@@ -20,6 +19,6 @@ const authenticate = asyncHandler(async (req, res, next) => {
 	} else {
 		res.status(401).json({ message: "Not Authenticated" });
 	}
-});
+};
 
 export default authenticate;
