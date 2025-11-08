@@ -1,7 +1,6 @@
-import asyncHandler from "./asyncHandler.js";
 import File from "../models/File.js";
 
-const fileMiddleware = asyncHandler(async (req, res, next) => {
+const fileMiddleware = async (req, res, next) => {
 	const user = req.user;
 
 	try {
@@ -23,6 +22,6 @@ const fileMiddleware = asyncHandler(async (req, res, next) => {
 	}
 
 	next();
-});
+};
 
 export default fileMiddleware;
