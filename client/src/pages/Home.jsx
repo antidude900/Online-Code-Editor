@@ -8,7 +8,7 @@ const Home = () => {
 				<LeftSection />
 			</div>
 
-			<div className="[@media(max-width:270px)]:hidden">
+			<div className="[@media(max-width:270px)]:hidden flex-1">
 				<RightSection />
 			</div>
 		</div>
