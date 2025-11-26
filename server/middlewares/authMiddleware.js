@@ -11,14 +11,14 @@ const authenticate = async (req, res, next) => {
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 			req.user = await User.findById(decoded.userId).select("-password");
 
-			if (!req.user) throw new Error("Not Authenticated");
+			if (!req.user) throw new Error();
 			next();
 		} catch (error) {
 			res.status(401).json({ message: "Not Authenticated" });
 		}
 	} else {
 		console.log("No token found in cookies");
-		res.status(401).json({ message: "Not Authenticated (No token)" });
+		res.status(401).json({ message: "Not Authenticated" });
 	}
 };
 

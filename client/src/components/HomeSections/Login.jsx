@@ -77,7 +77,7 @@ const Login = () => {
 			</div>
 
 			{LoginError && LoginError.data.message === "Incorrect Password" && (
-				<div className="text-red-500 text-sm mb-4">
+				<div className="text-red-500 text-sm mb-4 text-center">
 					{LoginError?.data?.message || "Incorrect Password"}
 				</div>
 			)}

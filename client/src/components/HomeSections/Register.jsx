@@ -11,7 +11,7 @@ const Register = () => {
 
 	const dispatch = useDispatch();
 
-	const [register, { isLoading }] = useRegisterMutation();
+	const [register, { isLoading, error: RegisterError }] = useRegisterMutation();
 
 	function validation(type) {
 		switch (type) {
@@ -132,6 +132,13 @@ const Register = () => {
 					}}
 				/>
 			</div>
+
+			{RegisterError &&
+				RegisterError.data.message === "User already exists" && (
+					<div className="text-red-500 text-sm mb-4 text-center">
+						{"Email already exists"}
+					</div>
+				)}
 
 			<button
 				type="submit"
