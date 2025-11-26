@@ -17,7 +17,8 @@ const authenticate = async (req, res, next) => {
 			res.status(401).json({ message: "Not Authenticated" });
 		}
 	} else {
-		res.status(401).json({ message: "Not Authenticated" });
+		console.log("No token found in cookies");
+		res.status(401).json({ message: "Not Authenticated (No token)" });
 	}
 };
 
