@@ -14,6 +14,10 @@ const authenticate = async (req, res, next) => {
 			if (!req.user) throw new Error();
 			next();
 		} catch (error) {
+			res.cookie("jwt", "", {
+				httpOnly: true,
+				expires: new Date(0),
+			});
 			res.status(401).json({ message: "Not Authenticated" });
 		}
 	} else {

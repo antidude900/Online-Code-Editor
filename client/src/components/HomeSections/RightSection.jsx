@@ -4,7 +4,11 @@ import WorkspaceExplorer from "../WorkspaceExplorer";
 import AuthForm from "./AuthForm";
 
 const RightSection = () => {
-	const { userInfo } = useSelector((state) => state.auth);
+	const { userInfo, isLoading } = useSelector((state) => state.auth);
+
+	if (isLoading) {
+		return <></>;
+	}
 
 	return (
 		<div className="lg:flex-1 flex items-center justify-center h-screen">

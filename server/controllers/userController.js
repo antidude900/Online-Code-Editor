@@ -61,7 +61,7 @@ const loginUser = async (req, res) => {
 	}
 };
 
-const logoutCurrentUser = async (req, res) => {
+const logoutUser = async (req, res) => {
 	res.cookie("jwt", "", {
 		httpOnly: true,
 		expires: new Date(0),
@@ -70,9 +70,17 @@ const logoutCurrentUser = async (req, res) => {
 	res.status(200).json({ message: "Logged out successfully" });
 };
 
+const verifyUser = async (req, res) => {
+	res.status(200).json({
+		_id: req.user._id,
+		username: req.user.username,
+		email: req.user.email,
+	});
+};
+
 const getAllUsers = async (req, res) => {
 	const users = await User.find({});
 	res.json(users);
 };
 
-export { createUser, loginUser, logoutCurrentUser, getAllUsers };
+export { createUser, loginUser, logoutUser, verifyUser, getAllUsers };
