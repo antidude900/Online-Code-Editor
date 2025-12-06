@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useRegisterMutation } from "../../redux/api/userApiSlice";
-import { setCredentials } from "../../redux/states/authSlice";
+import { useRegisterMutation } from "@/redux/api/userApiSlice";
+import { setCredentials } from "@/redux/states/authSlice";
+import styles from "./Register.module.css";
 
 const Register = () => {
 	const [username, setUsername] = useState("");
@@ -80,13 +81,13 @@ const Register = () => {
 
 	return (
 		<form onSubmit={submitHandler}>
-			<div className="text-2xl font-bold mb-6">Create Account</div>
+			<div className={styles.register__title}>Create Account</div>
 
-			<div className="mb-4">
-				<div className="text-sm font-medium mb-2">Username</div>
+			<div className={styles.register__formGroup}>
+				<div className={styles.register__formGroupLabel}>Username</div>
 				<input
 					type="text"
-					className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-500"
+					className={styles.register__formInput}
 					placeholder="Enter your username"
 					value={username}
 					onChange={(e) => setUsername(e.target.value)}
@@ -94,11 +95,11 @@ const Register = () => {
 				/>
 			</div>
 
-			<div className="mb-4">
-				<div className="text-sm font-medium mb-2">Email</div>
+			<div className={styles.register__formGroup}>
+				<div className={styles.register__formGroupLabel}>Email</div>
 				<input
 					type="email"
-					className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-500"
+					className={styles.register__formInput}
 					placeholder="Enter your email"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
@@ -106,11 +107,11 @@ const Register = () => {
 				/>
 			</div>
 
-			<div className="mb-4">
-				<div className="text-sm font-medium mb-2">Password</div>
+			<div className={styles.register__formGroup}>
+				<div className={styles.register__formGroupLabel}>Password</div>
 				<input
 					type="password"
-					className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-500"
+					className={styles.register__formInput}
 					placeholder="Enter your password"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
@@ -118,12 +119,12 @@ const Register = () => {
 				/>
 			</div>
 
-			<div className="mb-6">
-				<div className="text-sm font-medium mb-2">Confirm Password</div>
+			<div className={styles.register__formGroupLast}>
+				<div className={styles.register__formGroupLabel}>Confirm Password</div>
 				<input
 					type="password"
 					name="confirmPassword"
-					className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-500"
+					className={styles.register__formInput}
 					placeholder="Confirm your password"
 					value={confirmPassword}
 					onChange={(e) => {
@@ -135,16 +136,14 @@ const Register = () => {
 
 			{RegisterError &&
 				RegisterError.data.message === "User already exists" && (
-					<div className="text-red-500 text-sm mb-4 text-center">
-						{"Email already exists"}
-					</div>
+					<div className={styles.register__error}>{"Email already exists"}</div>
 				)}
 
 			<button
 				type="submit"
 				disabled={isLoading}
-				className={`w-full bg-blue-500 py-2 px-4 rounded hover:bg-blue-600 ${
-					isLoading && "opacity-50 cursor-not-allowed"
+				className={`${styles.register__button} ${
+					isLoading ? styles.register__buttonDisabled : ""
 				}`}
 			>
 				{isLoading ? "Registering..." : "Register"}

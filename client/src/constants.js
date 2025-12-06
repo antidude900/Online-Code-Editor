@@ -4,7 +4,7 @@ export const LANGUAGES = {
 	python: "3.10.0",
 	javascript: "18.15.0",
 };
-	
+
 export const CODE_SNIPPETS = {
 	c: `#include <stdio.h>\n\nint main() {\n\tprintf("Hello World");\n\n\treturn 0;\n}\n`,
 	cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\ncout << "Hello World";\n\nreturn 0;\n}',
@@ -13,13 +13,13 @@ export const CODE_SNIPPETS = {
 };
 
 export const PLACEHOLDER = `Example:
-for enter x
-	  enter y enter z
-you can do:
-	  2 
-	  3 4
-which assigns: x=2,y=3,z=4
 
-Also, you don't need input message like: "Enter x:"
-It will only make your output look ugly!
+for Enter x:
+     Enter y, z:
+you can input:
+     2 
+     3 4
+which assigns: x=2, y=3, z=4
+
+Also, Don't write input messages in your code.
 `;

@@ -1,0 +1,47 @@
+.filesShow__modal {
+	position: fixed;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 50;
+}
+
+.filesShow__modalContent {
+	background-color: #282a36;
+	padding: 1rem;
+	border-radius: 1rem;
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+	width: 80%;
+	height: 90%;
+	position: relative;
+}
+
+.filesShow__closeButton {
+	position: absolute;
+	top: 0;
+	right: 1rem;
+	color: #6272a4;
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: color 0.2s ease-in-out;
+}
+
+.filesShow__closeButton:hover {
+	color: var(--foreground);
+}
+
+.filesShow__workspaceContainer {
+	width: 100%;
+	height: 100%;
+}
+
+.filesShow__backdrop {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+}

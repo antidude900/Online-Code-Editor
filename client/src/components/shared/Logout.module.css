@@ -1,0 +1,8 @@
+.logout__icon {
+	cursor: pointer;
+}
+
+.logout__iconDisabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}

@@ -1,0 +1,67 @@
+.register__title {
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin-bottom: 1.5rem;
+}
+
+.register__formGroup {
+	margin-bottom: 1rem;
+}
+
+.register__formGroupLast {
+	margin-bottom: 1.5rem;
+}
+
+.register__formGroupLabel {
+	font-size: 0.875rem;
+	font-weight: 500;
+	margin-bottom: 0.5rem;
+	display: block;
+}
+
+.register__formInput {
+	width: 100%;
+	padding: 0.5rem 1rem;
+	border: 1px solid #d1d5db;
+	border-radius: 0.25rem;
+	outline: none;
+	color: black;
+	font-size: 15px;
+}
+
+.register__formInput:focus {
+	ring: 2px;
+	ring-color: rgb(59, 130, 246);
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.register__error {
+	color: rgb(239, 68, 68);
+	font-size: 0.875rem;
+	margin-bottom: 1rem;
+	text-align: center;
+}
+
+.register__button {
+	width: 100%;
+	background-color: rgb(59, 130, 246);
+	padding: 0.5rem 1rem;
+	border-radius: 0.25rem;
+	transition: background-color 0.15s ease-in-out;
+	border: none;
+	cursor: pointer;
+	color: white;
+}
+
+.register__button:hover {
+	background-color: rgb(37, 99, 235);
+}
+
+.register__buttonDisabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.register__buttonDisabled:hover {
+	background-color: rgb(59, 130, 246);
+}

@@ -1,0 +1,23 @@
+.editorSection__container {
+	height: 80vh;
+	border: 4px solid #6272a4;
+	border-radius: 10px;
+}
+
+.editorSection__loading {
+	height: 80vh;
+}
+
+.editorSection__content {
+	background-color: #282a36;
+	height: 100%;
+	z-index: 1;
+	padding: 0.5rem;
+	border: 1px solid transparent;
+	border-radius: 10px;
+}
+
+.editorSection__editor {
+	height: 100%;
+	text-align: left;
+}

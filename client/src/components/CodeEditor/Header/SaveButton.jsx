@@ -3,12 +3,13 @@ import {
 	useCreateFileMutation,
 	useSaveFileMutation,
 	useGetFileByIdQuery,
-} from "../../redux/api/fileApiSlice";
+} from "@/redux/api/fileApiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFiles } from "../../redux/states/filesSlice";
-import AuthForm from "../HomeSections/AuthForm";
-import { Check, Loader2 } from "lucide-react";
+import { setFiles } from "@/redux/states/filesSlice";
+import AuthForm from "@/components/shared/AuthForm";
+import Button from "@/components/shared/Button";
+import styles from "./SaveButton.module.css";
 
 // eslint-disable-next-line react/prop-types
 export default function SaveButton({ fileId, codeByLanguage }) {
@@ -40,10 +41,9 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 		}
 	}, [currentFile]);
 
-	// Get save button state
 	const getSaveButtonState = () => {
 		if (saving) return "saving";
-		if (!fileId) return "new"; // No file ID means new file
+		if (!fileId) return "new";
 		if (hasUnsavedChanges) return "unsaved";
 		return "saved";
 	};
@@ -123,22 +123,13 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 			case "saving":
 				return (
 					<>
-						<Loader2 size={20} className="animate-spin text-yellow-500" />
-						<span>Saving</span>
+						<span className={styles.saveButton__saving}>Saving</span>
 					</>
 				);
 			case "saved":
 				return (
 					<>
-						<Check size={20} className="text-green-500" />
-						<span>Saved</span>
-					</>
-				);
-			case "unsaved":
-				return (
-					<>
-						<Check size={20} className="text-gray-400" />
-						<span>Save</span>
+						<span className={styles.saveButton__saved}>Saved</span>
 					</>
 				);
 			default:
@@ -148,8 +139,8 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 
 	return (
 		<div>
-			<button
-				className="btn flex items-center"
+			<Button
+				className={styles.saveButton__container}
 				disabled={saving}
 				onClick={async () => {
 					if (userInfo) {
@@ -169,14 +160,14 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 				}}
 			>
 				{renderButtonContent()}
-			</button>
+			</Button>
 
 			{open && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-					<div className="bg-[#282A36] p-8 rounded-2xl shadow-xl shadow-gray-900 w-full max-w-sm relative">
+				<div className={styles.saveButton__authModal}>
+					<div className={styles.saveButton__authModalContent}>
 						<button
 							onClick={() => setOpen(false)}
-							className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold"
+							className={styles.saveButton__authModalCloseButton}
 						>
 							×
 						</button>
@@ -185,7 +176,7 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 							<AuthForm />
 						) : (
 							<div>
-								<div className="text-2xl font-bold mb-6">
+								<div className={styles.saveButton__FilenameModalTitle}>
 									Name of your file:
 								</div>
 
@@ -201,25 +192,23 @@ export default function SaveButton({ fileId, codeByLanguage }) {
 											setName(e.target.value.trim());
 										}}
 										disabled={creating}
-										className="w-full h-[30px] text-center focus:border-b border-gray-400 focus:outline-none mb-6"
+										className={styles.saveButton__FilenameModalInput}
 										{...validation()}
 									/>
-									<button
+									<Button
 										type="submit"
 										disabled={creating}
-										className={`w-full bg-blue-500 py-2 px-4 rounded hover:bg-blue-600 ${
-											creating && "opacity-50 cursor-not-allowed"
-										}`}
+										className={styles.saveButton__FilenameModalSubmitButton}
 									>
 										{creating ? "Creating..." : "Create File"}
-									</button>
+									</Button>
 								</form>
 							</div>
 						)}
 					</div>
 
 					<div
-						className="absolute inset-0 -z-10"
+						className={styles.saveButton__backdrop}
 						onClick={() => setOpen(false)}
 					/>
 				</div>

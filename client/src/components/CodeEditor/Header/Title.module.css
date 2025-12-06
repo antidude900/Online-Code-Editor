@@ -1,0 +1,29 @@
+.title__container {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	cursor: pointer;
+	margin-right: 1.25rem;
+}
+
+.title__input {
+	background-color: transparent;
+	text-align: center;
+	border: 2px solid #6272a4;
+	border-radius: 0.5rem;
+	outline: none;
+	font-size: 0.875rem;
+	padding: 0.5rem;
+	min-width: 22ch;
+	width: 22ch;
+}
+
+.title__input:focus {
+	border-color: #8be9fd;
+}
+
+.title__inputDisabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}

@@ -1,0 +1,22 @@
+.button__container {
+	background-color: transparent;
+	border: 1px solid #44475a;
+	color: var(--foreground);
+	padding: 0.5rem 1rem;
+	border-radius: 0.5rem;
+	cursor: pointer;
+	transition: background-color 0.2s ease-in-out;
+	font-size: 0.875rem;
+	font-weight: 600;
+	height: 100%;
+}
+
+.button__container:hover {
+	background-color: #44475a;
+}
+
+.button__disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}

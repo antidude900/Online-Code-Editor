@@ -1,0 +1,62 @@
+.workspaceExplorer__container {
+	border: 2px dashed rgb(75, 85, 99);
+	width: 100%;
+	border-radius: 0.5rem;
+	height: 100%;
+	padding: 1rem;
+}
+
+.workspaceExplorer__scrollContainer {
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 100%;
+}
+
+.workspaceExplorer__emptyState {
+	display: flex;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+}
+
+.workspaceExplorer__FileWrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	cursor: pointer;
+}
+
+.workspaceExplorer__FileIcon:hover {
+	stroke: rgb(34, 211, 238);
+}
+
+.workspaceExplorer__inputSpaceHolder {
+	background-color: transparent;
+	outline: none;
+	border: none;
+}
+
+.workspaceExplorer__grid {
+	display: grid;
+	grid-template-columns: repeat(1, minmax(0, 1fr));
+	gap: 1rem;
+	justify-items: center;
+	align-items: start;
+	justify-content: center;
+}
+
+.workspaceExplorer__loadingText {
+	color: rgb(75, 85, 99);
+}
+
+@media (min-width: 640px) {
+	.workspaceExplorer__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (min-width: 768px) {
+	.workspaceExplorer__grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}

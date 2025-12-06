@@ -5,11 +5,12 @@ import { useSelector, useDispatch } from "react-redux";
 import {
 	useDeleteFileMutation,
 	useRenameFileMutation,
-} from "../../redux/api/fileApiSlice";
-import { setFiles } from "../../redux/states/filesSlice";
+} from "@/redux/api/fileApiSlice";
+import { setFiles } from "@/redux/states/filesSlice";
 import { Link } from "react-router-dom";
+import styles from "./File.module.css";
 
-const File = ({ file, deactivate, saveNewFile, loading }) => {
+const File = ({ file, deactivate, saveNewFile, loading, temp = false }) => {
 	const [name, setName] = useState(file?.filename || "");
 	const files = useSelector((state) => state.files);
 	const dispatch = useDispatch();
@@ -106,25 +107,25 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 	}
 
 	return (
-		<div className="relative group flex flex-col items-center cursor-pointer">
+		<div className={styles.file__container}>
 			<Link to={file && !fileLoading ? `/editor/${file._id}` : "#"}>
 				<FileCode
 					size={75}
-					strokeWidth={1}
-					className={`group-hover:stroke-cyan-400 ${
-						!file && "cursor-not-allowed"
-					} ${fileLoading && "animate-pulse text-gray-900 cursor-not-allowed"}
-				}`}
+					className={`${styles.file__icon} ${
+						!file ? styles.file__iconDisabled : ""
+					} ${fileLoading ? styles.file__iconLoading : ""}`}
 				/>
 			</Link>
 
-			<div
-				className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 flex flex-col gap-1"
-				disabled={fileLoading}
-				onClick={handleDelete}
-			>
-				<Trash size={15} className="text-red-500" />
-			</div>
+			{!temp && (
+				<div
+					className={styles.file__deleteButton}
+					disabled={fileLoading}
+					onClick={handleDelete}
+				>
+					<Trash size={15} className={styles.file__deleteIcon} />
+				</div>
+			)}
 
 			<input
 				ref={inputRef}
@@ -137,7 +138,9 @@ const File = ({ file, deactivate, saveNewFile, loading }) => {
 				onKeyDown={handleKeyDown}
 				onBlur={() => (file ? setName(file.filename) : deactivate?.())}
 				size={name.length || 1}
-				className="bg-transparent text-center focus:border-b border-gray-400 focus:outline-none text-sm"
+				className={`${styles.file__input} ${
+					fileLoading ? styles.file__inputDisabled : ""
+				}`}
 				{...validation()}
 			/>
 		</div>
@@ -148,5 +151,6 @@ File.propTypes = {
 	deactivate: PropTypes.func,
 	saveNewFile: PropTypes.func,
 	loading: PropTypes.bool,
+	temp: PropTypes.bool,
 };
 export default File;

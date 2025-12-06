@@ -1,8 +1,9 @@
 import { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
-import { useRenameFileMutation } from "../../redux/api/fileApiSlice";
-import { setFiles } from "../../redux/states/filesSlice";
+import { useRenameFileMutation } from "@/redux/api/fileApiSlice";
+import { setFiles } from "@/redux/states/filesSlice";
+import styles from "./Title.module.css";
 
 const Title = ({ file }) => {
 	const [name, setName] = useState(file?.filename || "");
@@ -84,7 +85,7 @@ const Title = ({ file }) => {
 	}
 
 	return (
-		<div className="relative flex flex-col items-center cursor-pointer mr-5">
+		<div className={styles.title__container}>
 			<input
 				ref={inputRef}
 				value={name}
@@ -96,7 +97,9 @@ const Title = ({ file }) => {
 				onKeyDown={handleKeyDown}
 				onBlur={() => setName(file.filename)}
 				size={name.length || 1}
-				className="bg-transparent text-center border-2 rounded-lg border-gray-700 focus:outline-none text-sm p-2"
+				className={`${styles.title__input} ${
+					renameLoading ? styles.title__inputDisabled : ""
+				}`}
 				{...validation()}
 			/>
 		</div>

@@ -1,0 +1,109 @@
+.inputOutput {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.inputOutput__inputBox {
+	height: 30%;
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+}
+
+.inputOutput__outputBox {
+	height: 70%;
+	display: flex;
+	flex-direction: column;
+}
+
+.inputOutput__label {
+	color: #a6adbb;
+	width: 100px;
+	font-size: 1.25rem;
+	font-weight: 700;
+	height: 20%;
+}
+
+.inputOutput__labelOutput {
+	color: #a6adbb;
+	width: 100px;
+	font-size: 1.25rem;
+	font-weight: 700;
+	height: 8.62%;
+}
+
+.inputOutput__border {
+	position: relative;
+	border: 4px solid var(--comment, #6272a4);
+	padding: 0.5rem;
+	border-radius: 10px;
+}
+
+.inputOutput__borderInput {
+	height: 80%;
+}
+.inputOutput__borderOutput {
+	height: 91.38%;
+}
+
+.inputOutput__borderError {
+	border-color: var(--red, #ff5555);
+}
+
+.inputOutput__borderSuccess {
+	border-color: var(--green, #50fa7b);
+}
+
+.inputOutput__inputBoxTextarea {
+	width: 100%;
+	height: 100%;
+	background-color: inherit;
+	outline: none;
+	resize: none;
+	color: var(--foreground, #f8f8f2);
+	border: none;
+}
+
+.inputOutput__inputBoxTextareaEmpty {
+	font-size: 9px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.inputOutput__output {
+	overflow: auto;
+	width: 100%;
+	height: 98%;
+	padding: 0.25rem;
+}
+
+.inputOutput__outputPre {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.inputOutput__inputBoxScrollButton {
+	position: absolute;
+	right: 50%;
+	color: white;
+	opacity: 0.5;
+	font-weight: 700;
+}
+
+.inputOutput__inputBoxScrollButtonTop {
+	top: -23px;
+}
+
+.inputOutput__inputBoxScrollButtonBottom {
+	top: 110px;
+}
+
+.inputOutput__inputBoxScrollIcon {
+	font-size: 1.25rem;
+	border: 4px solid var(--comment, #6272a4);
+	border-radius: 50%;
+	cursor: pointer;
+	padding: 1px;
+	line-height: 1;
+	display: inline-block;
+}

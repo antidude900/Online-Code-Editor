@@ -44,7 +44,8 @@ import { cpp } from "@codemirror/lang-cpp";
 import { useEffect, useRef } from "react";
 import "./loading-animation.css";
 import { useDispatch, useSelector } from "react-redux";
-import { updateCode } from "../../redux/states/CodeEditorSlice";
+import { updateCode } from "@/redux/states/CodeEditorSlice";
+import styles from "./index.module.css";
 
 export default function EditorSection() {
 	const { code, language, isLoading } = useSelector(
@@ -79,6 +80,9 @@ export default function EditorSection() {
 		".cm-selectionMatch": {
 			backgroundColor: "#4A90E2",
 			opacity: "0.2",
+		},
+		"*": {
+			fontFamily: "monospace,'Consolas'",
 		},
 	});
 
@@ -147,12 +151,14 @@ export default function EditorSection() {
 
 	return (
 		<div
-			className={`${
-				isLoading ? "card" : "border-4 rounded-[10px] border-gray-700"
-			} h-[80vh] `}
+			className={
+				isLoading
+					? `${styles.editorSection__loading} card`
+					: styles.editorSection__container
+			}
 		>
-			<div className="bg-[#282A36] h-full z-1 p-2 border border-transparent rounded-[10px]	">
-				<div ref={editor} className="h-full"></div>
+			<div className={styles.editorSection__content}>
+				<div ref={editor} className={styles.editorSection__editor}></div>
 			</div>
 		</div>
 	);

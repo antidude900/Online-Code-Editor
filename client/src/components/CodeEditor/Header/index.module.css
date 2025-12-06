@@ -1,0 +1,142 @@
+.header__container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	margin-bottom: 1.25rem;
+}
+
+.header__leftSection {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.5rem;
+	min-height: 50px;
+	width: 100%;
+}
+
+.header__label {
+	width: 100%;
+	font-weight: 700;
+	margin-left: 0.75rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.header__logo {
+	width: 4rem;
+	height: auto;
+}
+
+.header__leftSectionButtons {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	flex-grow: 1;
+	gap: 0.5rem;
+	width: 100%;
+}
+
+.header__rightSection {
+	display: flex;
+	align-items: center;
+	min-height: 48px;
+	width: 100%;
+}
+
+.header__rightSectionButtons {
+	display: flex;
+	gap: 1rem;
+}
+
+.header__filesShowContainer {
+	display: block;
+}
+
+.header__authModal {
+	position: fixed;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 50;
+}
+
+.header__authModalContent {
+	background-color: #282a36;
+	padding: 2rem;
+	border-radius: 1rem;
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+	width: 100%;
+	max-width: 24rem;
+	position: relative;
+}
+
+.header__authModalCloseButton {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	color: #6272a4;
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: color 0.2s ease-in-out;
+}
+
+.header__authModalCloseButton:hover {
+	color: var(--foreground);
+}
+
+.header__authModalbackdrop {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+}
+
+@media (min-width: 640px) {
+	.header__leftSection {
+		flex-direction: row;
+		align-items: center;
+		gap: 0;
+	}
+
+	.header__label {
+		width: 100px;
+		justify-content: flex-start;
+	}
+
+	.header__logo {
+		width: 70px;
+	}
+
+	.header__leftSectionButtons {
+		flex-wrap: nowrap;
+		width: auto;
+	}
+}
+
+@media (max-width: 450px) {
+	.header__filesShowContainer {
+		display: none;
+	}
+}
+
+@media (min-width: 1024px) {
+	.header__container {
+		flex-direction: row;
+		align-items: flex-start;
+	}
+
+	.header__leftSection {
+		width: 60vw;
+	}
+
+	.header__rightSection {
+		width: 40vw;
+		margin-left: 2.5rem;
+		justify-content: flex-end;
+	}
+}

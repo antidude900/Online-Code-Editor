@@ -3,10 +3,11 @@ import File from "./File";
 import {
 	useCreateFileMutation,
 	useGetAllFilesQuery,
-} from "../../redux/api/fileApiSlice";
-import { setFiles } from "../../redux/states/filesSlice";
+} from "@/redux/api/fileApiSlice";
+import { setFiles } from "@/redux/states/filesSlice";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import styles from "./index.module.css";
 
 // eslint-disable-next-line react/prop-types
 const WorkspaceExplorer = ({ currentFileId }) => {
@@ -61,28 +62,32 @@ const WorkspaceExplorer = ({ currentFileId }) => {
 	}
 
 	if (filesLoading) {
-		return <div>Loading Files...</div>;
+		return (
+			<div className={styles.workspaceExplorer__loadingText}>
+				Loading Files...
+			</div>
+		);
 	}
 
 	return (
-		<div className="border-2 border-gray-600 border-dashed w-full rounded-lg h-full p-4">
-			<div className="overflow-y-auto overflow-x-hidden h-full">
+		<div className={styles.workspaceExplorer__container}>
+			<div className={styles.workspaceExplorer__scrollContainer}>
 				{!files.length ? (
-					<div className="flex h-full justify-center items-center">
-						<div className="flex flex-col items-center cursor-pointer">
+					<div className={styles.workspaceExplorer__emptyState}>
+						<div className={styles.workspaceExplorer__FileWrapper}>
 							<FilePlus
 								size={75}
 								style={{ strokeDasharray: "2 2" }}
 								strokeWidth={1}
 								stroke="gray"
-								className="hover:stroke-cyan-400"
+								className={styles.workspaceExplorer__FileIcon}
 								onClick={() => setNewFileTemp(true)}
 							/>
 
 							<input
 								value=""
 								disabled
-								className="bg-transparent text-center border-b border-transparent text-gray-400"
+								className={styles.workspaceExplorer__inputSpaceHolder}
 							/>
 						</div>
 
@@ -91,17 +96,18 @@ const WorkspaceExplorer = ({ currentFileId }) => {
 								active={true}
 								saveNewFile={saveNewFile}
 								loading={isLoading}
+								temp={true}
 							/>
 						)}
 					</div>
 				) : (
-					<div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 md:grid-cols-3 justify-items-center place-items-start">
+					<div className={styles.workspaceExplorer__grid}>
 						<FilePlus
 							size={75}
 							style={{ strokeDasharray: "2 2" }}
 							strokeWidth={1}
 							stroke="gray"
-							className="hover:stroke-cyan-400"
+							className={styles.workspaceExplorer__FileIcon}
 							onClick={() => setNewFileTemp(true)}
 						/>
 						{files.map((file) => (

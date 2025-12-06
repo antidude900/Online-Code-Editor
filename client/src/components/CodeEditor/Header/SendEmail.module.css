@@ -1,0 +1,28 @@
+.sendEmail__form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	background-color: var(--background, #282a36);
+	padding: 1.25rem;
+	border-radius: 0.5rem;
+	width: 370px;
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.sendEmail__input {
+	width: 100%;
+	padding: 0.5rem 1rem;
+	background-color: transparent;
+	border: 1px solid #6272a4;
+	border-radius: 0.25rem;
+	outline: none;
+	font-size: 0.875rem;
+}
+
+.sendEmail__input:focus {
+	border-color: #8be9fd;
+}
+
+.sendEmail__input::placeholder {
+	color: #6272a4;
+}

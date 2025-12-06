@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
-import { PLACEHOLDER } from "../../constants";
+import { PLACEHOLDER } from "../../../constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setEditorProperty } from "../../redux/states/CodeEditorSlice";
+import { setEditorProperty } from "../../../redux/states/CodeEditorSlice";
+import styles from "./index.module.css";
 
 export default function InputOutputSection() {
 	const { output, isError, input } = useSelector((state) => state.codeEditor);
@@ -58,33 +59,35 @@ export default function InputOutputSection() {
 	};
 
 	return (
-		<div className="input-output flex flex-col h-full">
-			<div className="input-box h-[30%] mb-[20px] flex flex-col">
-				<div className="text-[#A6ADBB] w-[100px] text-[20px] font-bold h-[20%]">
-					Input
-				</div>
+		<div className={styles.inputOutput}>
+			<div className={styles.inputOutput__inputBox}>
+				<div className={styles.inputOutput__label}>Input</div>
 
 				<div
-					className={`relative input-border border-4 h-[80%] ${
+					className={`${styles.inputOutput__border} ${
+						styles.inputOutput__borderInput
+					} ${
 						isError !== null
 							? isError
-								? "border-red-700"
-								: "border-green-700"
-							: "border-gray-700"
-					} p-2 rounded-[10px]`}
+								? styles.inputOutput__borderError
+								: styles.inputOutput__borderSuccess
+							: ""
+					}`}
 				>
 					<textarea
 						ref={textareaRef}
-						className={`w-full h-full bg-inherit outline-none resize-none ${
-							input === "" && "text-[10px]"
+						className={`${styles.inputOutput__inputBoxTextarea} ${
+							input === "" ? styles.inputOutput__inputBoxTextareaEmpty : ""
 						}`}
 						placeholder={PLACEHOLDER}
 						onChange={handleInputChange}
 					/>
 					{isScrollableUp && (
-						<div className="absolute top-[-23px] right-[50%] text-white opacity-50 font-bold">
+						<div
+							className={`${styles.inputOutput__inputBoxScrollButton} ${styles.inputOutput__inputBoxScrollButtonTop}`}
+						>
 							<span
-								className="text-xl border-4 border-gray-500 rounded-full cursor-pointer p-[1px] leading-none inline-block "
+								className={styles.inputOutput__inputBoxScrollIcon}
 								onClick={scrollToTop}
 							>
 								↑
@@ -92,9 +95,11 @@ export default function InputOutputSection() {
 						</div>
 					)}
 					{isScrollableDown && (
-						<div className="absolute top-[110px] right-[50%] text-white opacity-50 font-bold">
+						<div
+							className={`${styles.inputOutput__inputBoxScrollButton} ${styles.inputOutput__inputBoxScrollButtonBottom}`}
+						>
 							<span
-								className="text-xl border-4 border-gray-500 rounded-full cursor-pointer p-[1px] leading-none inline-block"
+								className={styles.inputOutput__inputBoxScrollIcon}
 								onClick={scrollToBottom}
 							>
 								↓
@@ -104,22 +109,22 @@ export default function InputOutputSection() {
 				</div>
 			</div>
 
-			<div className="output-box h-[70%] flex flex-col">
-				<div className="text-[#A6ADBB] w-[100px] text-[20px] font-bold h-[8.62%]">
-					Output
-				</div>
+			<div className={styles.inputOutput__outputBox}>
+				<div className={styles.inputOutput__labelOutput}>Output</div>
 				<div
-					className={`output-border border-4 h-[91.38%] ${
+					className={`${styles.inputOutput__border}  ${
+						styles.inputOutput__borderOutput
+					} ${
 						isError !== null
 							? isError
-								? "border-red-700"
-								: "border-green-700"
-							: "border-gray-700"
-					} p-2 rounded-[10px]`}
+								? styles.inputOutput__borderError
+								: styles.inputOutput__borderSuccess
+							: ""
+					}`}
 				>
-					<div className="overflow-auto w-full h-[98%] p-1">
+					<div className={styles.inputOutput__output}>
 						{output ? (
-							<pre className="whitespace-pre-wrap break-words">{output}</pre>
+							<pre className={styles.inputOutput__outputPre}>{output}</pre>
 						) : (
 							"Run Code to See Output"
 						)}

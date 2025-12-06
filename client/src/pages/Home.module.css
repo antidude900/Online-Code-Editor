@@ -1,0 +1,28 @@
+.home__container {
+	display: flex;
+	flex-direction: column;
+}
+
+.home__leftSection {
+	width: 100%;
+}
+
+.home__rightSection {
+	flex: 1;
+}
+
+@media (max-width: 270px) {
+	.home__rightSection {
+		display: none;
+	}
+}
+
+@media (min-width: 1024px) {
+	.home__container {
+		flex-direction: row;
+	}
+
+	.home__leftSection {
+		width: 50%;
+	}
+}

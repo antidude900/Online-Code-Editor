@@ -1,0 +1,61 @@
+.codeEditor__center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+.codeEditor__authContainer {
+	background-color: #282a36;
+	padding: 2rem;
+	border-radius: 1rem;
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+	width: 100%;
+	max-width: 24rem;
+}
+
+.codeEditor__errorTitle {
+	font-size: 2.25rem;
+	font-weight: 700;
+	color: #ff5555;
+}
+
+.codeEditor__container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+}
+
+.codeEditor__content {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	flex: 1;
+}
+
+.codeEditor__editor {
+	width: 100%;
+}
+
+.codeEditor__inputOutputSection {
+	width: 100%;
+	height: 80vh;
+	margin-top: 65px;
+}
+
+@media (min-width: 1024px) {
+	.codeEditor__content {
+		flex-direction: row;
+	}
+
+	.codeEditor__editor {
+		width: 60vw;
+	}
+
+	.codeEditor__inputOutputSection {
+		width: 40vw;
+		margin-left: 2.5rem;
+		margin-top: 0;
+	}
+}

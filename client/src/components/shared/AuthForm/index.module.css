@@ -1,0 +1,16 @@
+/* AuthForm Component - BEM naming convention */
+
+.authForm__toggleButton {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: rgb(59, 130, 246);
+	text-decoration: underline;
+	cursor: pointer;
+	margin-top: 1.5rem;
+	text-align: center;
+	transition: color 0.15s ease-in-out;
+}
+
+.authForm__toggleButton:hover {
+	color: rgb(29, 78, 216);
+}

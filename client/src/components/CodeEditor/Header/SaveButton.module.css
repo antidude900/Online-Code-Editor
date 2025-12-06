@@ -1,0 +1,75 @@
+.saveButton__container {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	height: 100%;
+}
+
+.saveButton__authModal {
+	position: fixed;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 50;
+}
+
+.saveButton__authModalContent {
+	background-color: #282a36;
+	padding: 2rem;
+	border-radius: 1rem;
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+	width: 100%;
+	max-width: 24rem;
+	position: relative;
+}
+
+.saveButton__authModalCloseButton {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	color: #6272a4;
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: color 0.2s ease-in-out;
+}
+
+.saveButton__authModalCloseButton:hover {
+	color: var(--foreground);
+}
+
+.saveButton__FilenameModalTitle {
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin-bottom: 1.5rem;
+}
+
+.saveButton__FilenameModalInput {
+	width: 100%;
+	height: 30px;
+	text-align: center;
+	border: none;
+	border-bottom: 1px solid transparent;
+	outline: none;
+	margin-bottom: 1.5rem;
+	background-color: #3b3b3b;
+	font-size: 16px;
+}
+
+.saveButton__FilenameModalInput:focus {
+	border-bottom: 1px solid gray;
+}
+
+.saveButton__FilenameModalSubmitButton {
+	width: 100%;
+}
+
+.saveButton__backdrop {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+}

@@ -1,7 +1,8 @@
 import { useDispatch } from "react-redux";
-import { useLogoutMutation } from "../../redux/api/userApiSlice";
+import { useLogoutMutation } from "@/redux/api/userApiSlice";
 import { LogOut } from "lucide-react";
-import { logout } from "../../redux/states/authSlice";
+import { logout } from "@/redux/states/authSlice";
+import styles from "./Logout.module.css";
 
 const Logout = () => {
 	const dispatch = useDispatch();
@@ -22,9 +23,7 @@ const Logout = () => {
 		<LogOut
 			onClick={logoutHandler}
 			disabled={isLoading}
-			className={`${
-				isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-			}`}
+			className={isLoading ? styles.logout__iconDisabled : styles.logout__icon}
 		/>
 	);
 };

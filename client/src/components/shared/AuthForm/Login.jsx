@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useLoginMutation } from "../../redux/api/userApiSlice";
-import { setCredentials } from "../../redux/states/authSlice";
+import { useLoginMutation } from "@/redux/api/userApiSlice";
+import { setCredentials } from "@/redux/states/authSlice";
+import styles from "./Login.module.css";
 
 const Login = () => {
 	const [email, setEmail] = useState("");
@@ -52,23 +53,23 @@ const Login = () => {
 	}
 	return (
 		<form onSubmit={submitHandler}>
-			<div className="text-2xl font-bold mb-6">Login</div>
-			<div className="mb-4">
-				<div className="text-sm font-medium mb-2">Email</div>
+			<div className={styles.login__title}>Login</div>
+			<div className={styles.login__formGroup}>
+				<div className={styles.login__formGroupLabel}>Email</div>
 				<input
 					type="email"
-					className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-500"
+					className={styles.login__formInput}
 					placeholder="Enter your email"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					{...validation("email")}
 				/>
 			</div>
-			<div className="mb-6">
-				<div className="text-sm font-medium mb-2">Password</div>
+			<div className={styles.login__formGroupLast}>
+				<div className={styles.login__formGroupLabel}>Password</div>
 				<input
 					type="password"
-					className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-500"
+					className={styles.login__formInput}
 					placeholder="Enter your password"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
@@ -77,15 +78,15 @@ const Login = () => {
 			</div>
 
 			{LoginError && LoginError.data.message === "Incorrect Password" && (
-				<div className="text-red-500 text-sm mb-4 text-center">
+				<div className={styles.login__error}>
 					{LoginError?.data?.message || "Incorrect Password"}
 				</div>
 			)}
 			<button
 				type="submit"
 				disabled={isLoading}
-				className={`w-full bg-blue-500 py-2 px-4 rounded hover:bg-blue-600 ${
-					isLoading && "opacity-50 cursor-not-allowed"
+				className={`${styles.login__button} ${
+					isLoading ? styles.login__buttonDisabled : ""
 				}`}
 			>
 				{isLoading ? "Logging in..." : "Login"}

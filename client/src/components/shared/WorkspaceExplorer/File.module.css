@@ -1,0 +1,72 @@
+.file__container {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	cursor: pointer;
+}
+
+.file__icon {
+	stroke-width: 1px;
+	transition: stroke 0.15s ease-in-out;
+	stroke: white;
+}
+
+.file:hover .file__icon {
+	stroke: rgb(34, 211, 238);
+}
+
+.file__iconDisabled {
+	cursor: not-allowed;
+}
+
+.file__iconLoading {
+	animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	color: rgb(17, 24, 39);
+	cursor: not-allowed;
+}
+
+.file__deleteButton {
+	position: absolute;
+	top: 0;
+	right: 0;
+	opacity: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.file__container:hover .file__deleteButton {
+	opacity: 1;
+}
+
+.file__deleteIcon {
+	stroke: rgb(239, 68, 68);
+}
+
+.file__input {
+	background-color: transparent;
+	text-align: center;
+	border-bottom: 1px solid transparent;
+	outline: none;
+	color: white;
+}
+
+.file__input:focus {
+	border-bottom: 1px solid rgb(156, 163, 175);
+}
+
+.file__inputDisabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}

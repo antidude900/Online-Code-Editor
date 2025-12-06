@@ -1,0 +1,34 @@
+.rightSection__container {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+}
+
+.rightSection__workspaceContainer {
+	width: 100%;
+	padding: 2rem;
+	height: 100vh;
+}
+
+.rightSection__logoutButtonContainer {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+}
+
+.rightSection__authContainer {
+	background-color: #282a36;
+	padding: 2rem;
+	border-radius: 1rem;
+	box-shadow: 0 25px 50px -12px rgb(17, 24, 39);
+	width: 100%;
+	max-width: 24rem;
+}
+
+@media (min-width: 1024px) {
+	.rightSection__container {
+		flex: 1;
+	}
+}

@@ -1,0 +1,11 @@
+.editor__container {
+	padding-top: 2.5rem;
+	height: 100vh;
+}
+
+@media (min-width: 640px) {
+	.editor__container {
+		padding-left: 50px;
+		padding-right: 50px;
+	}
+}

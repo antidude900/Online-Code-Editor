@@ -1,7 +1,8 @@
 import { Folder } from "lucide-react";
 import { useEffect, useState } from "react";
-import WorkspaceExplorer from "../WorkspaceExplorer";
+import WorkspaceExplorer from "@/components/shared/WorkspaceExplorer";
 import { useParams } from "react-router";
+import styles from "./FilesShow.module.css";
 
 const FilesShow = () => {
 	const { fileId } = useParams();
@@ -14,22 +15,22 @@ const FilesShow = () => {
 		<>
 			<Folder className="cursor-pointer" onClick={() => setOpen(true)} />
 			{open && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-					<div className="bg-[#282A36] p-4 rounded-2xl shadow-xl shadow-gray-900 w-[80%] h-[90%] relative">
+				<div className={styles.filesShow__modal}>
+					<div className={styles.filesShow__modalContent}>
 						<button
 							onClick={() => setOpen(false)}
-							className="absolute top-0 right-4 text-gray-400 hover:text-white text-xl font-bold"
+							className={styles.filesShow__closeButton}
 						>
 							×
 						</button>
 
-						<div className="w-full h-full">
+						<div className={styles.filesShow__workspaceContainer}>
 							<WorkspaceExplorer currentFileId={fileId} />
 						</div>
 					</div>
 
 					<div
-						className="absolute inset-0 -z-10"
+						className={styles.filesShow__backdrop}
 						onClick={() => setOpen(false)}
 					/>
 				</div>

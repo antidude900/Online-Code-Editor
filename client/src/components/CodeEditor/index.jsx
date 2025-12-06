@@ -1,26 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
-import LanguageMenu from "./LanguageMenu";
-import EditorSection from "./EditorSection.jsx";
-import InputOutputSection from "./InputOutputSection.jsx";
-import SendEmail from "./SendEmail.jsx";
+import { useEffect } from "react";
+import Header from "./Header/index.jsx";
+import EditorSection from "./EditorSection";
+import InputOutputSection from "./InputOutputSection";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	setEditorProperty,
 	clearOutput,
 	updateAllCode,
 	resetToInitialState,
-} from "../../redux/states/CodeEditorSlice.js";
-import { useExecuteCodeMutation } from "../../redux/api/pistonApiSlice.js";
-import { LogIn } from "lucide-react";
-import Logout from "../HomeSections/Logout.jsx";
-
-import { Link, useParams } from "react-router-dom";
-import { useGetFileByIdQuery } from "../../redux/api/fileApiSlice.js";
-import SaveButton from "./SaveButton.jsx";
-import AuthForm from "../HomeSections/AuthForm.jsx";
-import Title from "./Title.jsx";
-import FilesShow from "./FilesShow.jsx";
+} from "@/redux/states/CodeEditorSlice.js";
+import { useExecuteCodeMutation } from "@/redux/api/pistonApiSlice.js";
+import { useParams } from "react-router-dom";
+import { useGetFileByIdQuery } from "@/redux/api/fileApiSlice.js";
+import AuthForm from "@/components/shared/AuthForm";
+import styles from "./index.module.css";
 
 export default function CodeEditor() {
 	const { code, language, input, isLoading, codeByLanguage } = useSelector(
@@ -46,10 +40,8 @@ export default function CodeEditor() {
 	} = useGetFileByIdQuery(fileId, {
 		skip: !fileId,
 	});
-	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
-		setOpen(false);
 		if (fileId) refetchFile();
 	}, [fileId]);
 
@@ -102,8 +94,8 @@ export default function CodeEditor() {
 
 	if (fileFetchError && fileFetchError.data.message === "Not Authenticated") {
 		return (
-			<div className="flex items-center justify-center h-full">
-				<div className="bg-[#282A36] p-8 rounded-2xl shadow-xl shadow-gray-900 w-full max-w-sm">
+			<div className={styles.codeEditor__center}>
+				<div className={styles.codeEditor__authContainer}>
 					<AuthForm />
 				</div>
 			</div>
@@ -111,94 +103,47 @@ export default function CodeEditor() {
 	}
 	if (fileFetchError && fileFetchError.data.message === "Not Authorized") {
 		return (
-			<div className="flex items-center justify-center h-full">
-				<h1 className="text-4xl font-bold text-red-500">Not Authorized!</h1>
+			<div className={styles.codeEditor__center}>
+				<h1 className={styles.codeEditor__errorTitle}>Not Authorized!</h1>
 			</div>
 		);
 	}
 
 	if (fileFetchError && fileFetchError.data.message === "File Not Found") {
 		return (
-			<div className="flex items-center justify-center h-full">
-				<h1 className="text-4xl font-bold text-red-500">File Not Found!</h1>
+			<div className={styles.codeEditor__center}>
+				<h1 className={styles.codeEditor__errorTitle}>File Not Found!</h1>
 			</div>
 		);
 	}
 
 	if (fileFetchError && fileFetchError.data.message === "Error Occurred") {
 		return (
-			<div className="flex items-center justify-center h-full">
-				<h1 className="text-4xl font-bold text-red-500">Error Occurred!</h1>
+			<div className={styles.codeEditor__center}>
+				<h1 className={styles.codeEditor__errorTitle}>Error Occurred!</h1>
 			</div>
 		);
 	}
 
 	return (
 		<>
-			<div className="whole-editor relative flex flex-col lg:flex-row w-100%">
-				<div className="editor w-100% lg:w-[60vw]">
-					<div className="labels flex flex-col sm:flex-row items-start sm:items-center mb-5 gap-2 sm:gap-0 min-h-[50px]">
-						<div className="label w-full sm:w-[100px] font-bold ml-3 flex justify-between sm:justify-start items-center">
-							<Link to="/">
-								<img src="/logo.png" className="w-16 h-auto sm:w-[70px]" />
-							</Link>
-						</div>
-						{file && <Title file={file} />}
-
-						<div className="label-buttons flex flex-wrap sm:flex-nowrap justify-between grow gap-2 w-full sm:w-auto">
-							<LanguageMenu />
-							<SaveButton fileId={fileId} codeByLanguage={codeByLanguage} />
-							<SendEmail />
-							<button
-								className={`btn ${
-									isLoading ? "cursor-not-allowed opacity-50" : ""
-								}`}
-								onClick={runCode}
-							>
-								Run
-							</button>
-						</div>
+			<div className={styles.codeEditor__container}>
+				<Header
+					file={file}
+					fileId={fileId}
+					codeByLanguage={codeByLanguage}
+					isLoading={isLoading}
+					runCode={runCode}
+					userInfo={userInfo}
+				/>
+				<div className={styles.codeEditor__content}>
+					<div className={styles.codeEditor__editor}>
+						<EditorSection />
 					</div>
-					<EditorSection />
-				</div>
 
-				<div className="absolute -top-10 lg:top-0 right-0 min-h-[48px] flex items-center">
-					{userInfo ? (
-						<div className="flex gap-4">
-							<Logout />
-							<div className="[@media(max-width:450px)]:hidden">
-								<FilesShow />
-							</div>
-						</div>
-					) : (
-						<>
-							<LogIn className="cursor-pointer" onClick={() => setOpen(true)} />
-
-							{open && (
-								<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-									<div className="bg-[#282A36] p-8 rounded-2xl shadow-xl shadow-gray-900 w-full max-w-sm relative">
-										<button
-											onClick={() => setOpen(false)}
-											className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold"
-										>
-											×
-										</button>
-
-										<AuthForm />
-									</div>
-
-									<div
-										className="absolute inset-0 -z-10"
-										onClick={() => setOpen(false)}
-									/>
-								</div>
-							)}
-						</>
-					)}
-				</div>
-
-				<div className="w-100% lg:w-[40vw] lg:ml-10 h-[80vh] mt-[65px]">
-					<InputOutputSection />
+					<div className={styles.codeEditor__inputOutputSection}>
+						<InputOutputSection />
+					</div>
 				</div>
 			</div>
 		</>
