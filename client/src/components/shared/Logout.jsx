@@ -1,7 +1,9 @@
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "@/redux/api/userApiSlice";
 import { LogOut } from "lucide-react";
 import { logout } from "@/redux/states/authSlice";
+import { apiSlice } from "@/redux/api/apiSlice";
 import styles from "./Logout.module.css";
 
 const Logout = () => {
@@ -13,7 +15,7 @@ const Logout = () => {
 		try {
 			await logoutApi().unwrap();
 			dispatch(logout());
-			window.location.reload();
+			dispatch(apiSlice.util.resetApiState());
 		} catch (error) {
 			console.error(error);
 		}
