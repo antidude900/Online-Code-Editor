@@ -11,12 +11,12 @@ import {
 	resetToInitialState,
 } from "@/redux/states/CodeEditorSlice.js";
 import { useExecuteCodeMutation } from "@/redux/api/pistonApiSlice.js";
-import { useParams } from "react-router-dom";
 import { useGetFileByIdQuery } from "@/redux/api/fileApiSlice.js";
 import AuthForm from "@/components/shared/AuthForm";
 import styles from "./index.module.css";
+import PropTypes from "prop-types";
 
-export default function CodeEditor() {
+export default function CodeEditor({ fileId }) {
 	const { code, language, input, isLoading, codeByLanguage } = useSelector(
 		(state) => state.codeEditor
 	);
@@ -30,7 +30,6 @@ export default function CodeEditor() {
 	};
 
 	const [executeCode] = useExecuteCodeMutation();
-	const { fileId } = useParams();
 
 	const {
 		data: file,
@@ -149,3 +148,7 @@ export default function CodeEditor() {
 		</>
 	);
 }
+
+CodeEditor.propTypes = {
+	fileId: PropTypes.string,
+};
