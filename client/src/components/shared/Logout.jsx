@@ -1,5 +1,4 @@
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "@/redux/api/userApiSlice";
 import { LogOut } from "lucide-react";
 import { logout } from "@/redux/states/authSlice";
