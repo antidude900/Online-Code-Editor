@@ -1,9 +1,9 @@
 .workspaceExplorer__container {
 	border: 2px dashed rgb(75, 85, 99);
 	width: 100%;
-	border-radius: 0.5rem;
+	border-radius: 8px;
 	height: 100%;
-	padding: 1rem;
+	padding: 16px;
 }
 
 .workspaceExplorer__scrollContainer {
@@ -39,7 +39,7 @@
 .workspaceExplorer__grid {
 	display: grid;
 	grid-template-columns: repeat(1, minmax(0, 1fr));
-	gap: 1rem;
+	gap: 16px;
 	justify-items: center;
 	align-items: start;
 	justify-content: center;

@@ -8,23 +8,23 @@
 
 .rightSection__workspaceContainer {
 	width: 100%;
-	padding: 2rem;
+	padding: 32px;
 	height: 100vh;
 }
 
 .rightSection__logoutButtonContainer {
 	position: absolute;
-	top: 1rem;
-	right: 1rem;
+	top: 16px;
+	right: 16px;
 }
 
 .rightSection__authContainer {
 	background-color: #282a36;
-	padding: 2rem;
-	border-radius: 1rem;
+	padding: 32px;
+	border-radius: 16px;
 	box-shadow: 0 25px 50px -12px rgb(17, 24, 39);
 	width: 100%;
-	max-width: 24rem;
+	max-width: 384px;
 }
 
 @media (min-width: 1024px) {

@@ -7,15 +7,15 @@
 
 .codeEditor__authContainer {
 	background-color: #282a36;
-	padding: 2rem;
-	border-radius: 1rem;
+	padding: 32px;
+	border-radius: 16px;
 	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 	width: 100%;
-	max-width: 24rem;
+	max-width: 384px;
 }
 
 .codeEditor__errorTitle {
-	font-size: 2.25rem;
+	font-size: 36px;
 	font-weight: 700;
 	color: #ff5555;
 }
@@ -55,7 +55,7 @@
 
 	.codeEditor__inputOutputSection {
 		width: 40vw;
-		margin-left: 2.5rem;
+		margin-left: 40px;
 		margin-top: 0;
 	}
 }

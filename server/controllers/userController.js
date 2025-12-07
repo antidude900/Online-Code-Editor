@@ -54,10 +54,12 @@ const loginUser = async (req, res) => {
 				email: existingUser.email,
 			});
 		} else {
-			return res.status(401).json({ message: "Incorrect Password" });
+			return res
+				.status(401)
+				.json({ message: "Email or Password is incorrect!" });
 		}
 	} else {
-		return res.status(401).json({ message: "User not found" });
+		return res.status(401).json({ message: "Email or Password is incorrect!" });
 	}
 };
 

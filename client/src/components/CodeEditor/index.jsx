@@ -46,6 +46,7 @@ export default function CodeEditor({ fileId }) {
 
 	useEffect(() => {
 		if (!fileId) {
+			console.log("Should come here");
 			dispatch(resetToInitialState());
 		} else if (!file || fileFetchError) {
 			console.log("File not fetched", fileFetchError);
@@ -92,6 +93,7 @@ export default function CodeEditor({ fileId }) {
 	if (loadingFile) return <div>Loading...</div>;
 
 	if (fileFetchError && fileFetchError.data.message === "Not Authenticated") {
+		console.log("Authform")
 		return (
 			<div className={styles.codeEditor__center}>
 				<div className={styles.codeEditor__authContainer}>

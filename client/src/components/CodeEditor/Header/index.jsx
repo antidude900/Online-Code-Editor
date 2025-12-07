@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -21,6 +21,12 @@ export default function Header({
 	userInfo,
 }) {
 	const [open, setOpen] = useState(false);
+
+	useEffect(() => {
+		if (userInfo) {
+			setOpen(false);
+		}
+	}, [userInfo]);
 
 	return (
 		<div className={styles.header__container}>
@@ -54,8 +60,13 @@ export default function Header({
 						</div>
 					</div>
 				) : (
-					<>
-						<LogIn className="cursor-pointer" onClick={() => setOpen(true)} />
+					<div className={styles.header__rightSectionButtons}>
+						<LogIn
+							className="cursor-pointer"
+							onClick={() => {
+								setOpen(true);
+							}}
+						/>
 
 						{open && (
 							<div className={styles.header__authModal}>
@@ -76,7 +87,7 @@ export default function Header({
 								/>
 							</div>
 						)}
-					</>
+					</div>
 				)}
 			</div>
 		</div>

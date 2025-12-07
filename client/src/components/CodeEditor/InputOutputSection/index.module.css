@@ -20,7 +20,7 @@
 .inputOutput__label {
 	color: #a6adbb;
 	width: 100px;
-	font-size: 1.25rem;
+	font-size: 20px;
 	font-weight: 700;
 	height: 20%;
 }
@@ -28,7 +28,7 @@
 .inputOutput__labelOutput {
 	color: #a6adbb;
 	width: 100px;
-	font-size: 1.25rem;
+	font-size: 20px;
 	font-weight: 700;
 	height: 8.62%;
 }
@@ -36,7 +36,7 @@
 .inputOutput__border {
 	position: relative;
 	border: 4px solid var(--comment, #6272a4);
-	padding: 0.5rem;
+	padding: 8px;
 	border-radius: 10px;
 }
 
@@ -74,7 +74,7 @@
 	overflow: auto;
 	width: 100%;
 	height: 98%;
-	padding: 0.25rem;
+	padding: 4px;
 }
 
 .inputOutput__outputPre {
@@ -99,7 +99,7 @@
 }
 
 .inputOutput__inputBoxScrollIcon {
-	font-size: 1.25rem;
+	font-size: 20px;
 	border: 4px solid var(--comment, #6272a4);
 	border-radius: 50%;
 	cursor: pointer;

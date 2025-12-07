@@ -77,11 +77,12 @@ const Login = () => {
 				/>
 			</div>
 
-			{LoginError && LoginError.data.message === "Incorrect Password" && (
-				<div className={styles.login__error}>
-					{LoginError?.data?.message || "Incorrect Password"}
-				</div>
-			)}
+			{LoginError &&
+				LoginError.data.message === "Email or Password is incorrect!" && (
+					<div className={styles.login__error}>
+						{LoginError?.data?.message || "Email or Password is incorrect!"}
+					</div>
+				)}
 			<button
 				type="submit"
 				disabled={isLoading}

@@ -4,17 +4,17 @@
 	flex-direction: column;
 	align-items: center;
 	cursor: pointer;
-	margin-right: 1.25rem;
+	margin-right: 20px;
 }
 
 .title__input {
 	background-color: transparent;
 	text-align: center;
 	border: 2px solid #6272a4;
-	border-radius: 0.5rem;
+	border-radius: 8px;
 	outline: none;
-	font-size: 0.875rem;
-	padding: 0.5rem;
+	font-size: 14px;
+	padding: 8px;
 	min-width: 22ch;
 	width: 22ch;
 }

@@ -1,7 +1,7 @@
 .saveButton__container {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 8px;
 	height: 100%;
 }
 
@@ -17,22 +17,22 @@
 
 .saveButton__authModalContent {
 	background-color: #282a36;
-	padding: 2rem;
-	border-radius: 1rem;
+	padding: 32px;
+	border-radius: 16px;
 	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 	width: 100%;
-	max-width: 24rem;
+	max-width: 384px;
 	position: relative;
 }
 
 .saveButton__authModalCloseButton {
 	position: absolute;
-	top: 1rem;
-	right: 1rem;
+	top: 16px;
+	right: 16px;
 	color: #6272a4;
 	background: none;
 	border: none;
-	font-size: 1.5rem;
+	font-size: 24px;
 	font-weight: 700;
 	cursor: pointer;
 	transition: color 0.2s ease-in-out;
@@ -43,9 +43,9 @@
 }
 
 .saveButton__FilenameModalTitle {
-	font-size: 1.5rem;
+	font-size: 24px;
 	font-weight: 700;
-	margin-bottom: 1.5rem;
+	margin-bottom: 24px;
 }
 
 .saveButton__FilenameModalInput {
@@ -55,7 +55,7 @@
 	border: none;
 	border-bottom: 1px solid transparent;
 	outline: none;
-	margin-bottom: 1.5rem;
+	margin-bottom: 24px;
 	background-color: #3b3b3b;
 	font-size: 16px;
 }

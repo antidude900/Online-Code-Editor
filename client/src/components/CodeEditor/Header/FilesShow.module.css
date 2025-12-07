@@ -10,8 +10,8 @@
 
 .filesShow__modalContent {
 	background-color: #282a36;
-	padding: 1rem;
-	border-radius: 1rem;
+	padding: 16px;
+	border-radius: 16px;
 	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 	width: 80%;
 	height: 90%;
@@ -21,11 +21,11 @@
 .filesShow__closeButton {
 	position: absolute;
 	top: 0;
-	right: 1rem;
+	right: 16px;
 	color: #6272a4;
 	background: none;
 	border: none;
-	font-size: 1.5rem;
+	font-size: 24px;
 	font-weight: 700;
 	cursor: pointer;
 	transition: color 0.2s ease-in-out;
