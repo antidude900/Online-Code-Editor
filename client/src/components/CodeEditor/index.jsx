@@ -10,14 +10,14 @@ import {
 	updateAllCode,
 	resetToInitialState,
 } from "@/redux/states/CodeEditorSlice.js";
-import { useExecuteCodeMutation } from "@/redux/api/pistonApiSlice.js";
 import { useGetFileByIdQuery } from "@/redux/api/fileApiSlice.js";
 import AuthForm from "@/components/shared/AuthForm";
 import styles from "./index.module.css";
 import PropTypes from "prop-types";
+import { useExecutionWebSocket } from "@/hooks/useExecutionWebSocket.js";
 
 export default function CodeEditor({ fileId }) {
-	const { code, language, input, isLoading, codeByLanguage } = useSelector(
+	const { code, language, codeByLanguage } = useSelector(
 		(state) => state.codeEditor
 	);
 
@@ -29,7 +29,13 @@ export default function CodeEditor({ fileId }) {
 		dispatch(setEditorProperty({ property, value }));
 	};
 
-	const [executeCode] = useExecuteCodeMutation();
+	const {
+		isConnected,
+		isRunning,
+		waitingForInput,
+		executeCode: wsExecuteCode,
+		sendInput,
+	} = useExecutionWebSocket();
 
 	const {
 		data: file,
@@ -46,7 +52,6 @@ export default function CodeEditor({ fileId }) {
 
 	useEffect(() => {
 		if (!fileId) {
-			console.log("Should come here");
 			dispatch(resetToInitialState());
 		} else if (!file || fileFetchError) {
 			console.log("File not fetched", fileFetchError);
@@ -65,35 +70,29 @@ export default function CodeEditor({ fileId }) {
 	}, [language]);
 
 	useEffect(() => {
-		updateEditorProperty("isError", null);
-	}, [code]);
+		updateEditorProperty("isLoading", isRunning);
+	}, [isRunning]);
 
 	async function runCode() {
-		if (!code) return;
-		try {
-			updateEditorProperty("isLoading", true);
-			const { run: result } = await executeCode({
-				language,
-				code,
-				input,
-			}).unwrap();
-
-			console.log("message", result.message);
-			const formattedOutput = result.output.replace(/\t/g, "    ");
-
-			updateEditorProperty("output", formattedOutput);
-			updateEditorProperty("isError", result.stderr ? true : false);
-		} catch (error) {
-			console.log(error);
-		} finally {
-			updateEditorProperty("isLoading", false);
+		if (!code) {
+			updateEditorProperty("output", "\n[No code found...]\n");
+			updateEditorProperty("error", true);
+			return;
 		}
+		if (!isConnected) {
+			alert("Not connected to execution server. Please wait...");
+			return;
+		}
+
+		dispatch(clearOutput());
+		updateEditorProperty("isError", null);
+		wsExecuteCode(language, code);
 	}
 
 	if (loadingFile) return <div>Loading...</div>;
 
 	if (fileFetchError && fileFetchError.data.message === "Not Authenticated") {
-		console.log("Authform")
+		console.log("Authform");
 		return (
 			<div className={styles.codeEditor__center}>
 				<div className={styles.codeEditor__authContainer}>
@@ -133,7 +132,6 @@ export default function CodeEditor({ fileId }) {
 					file={file}
 					fileId={fileId}
 					codeByLanguage={codeByLanguage}
-					isLoading={isLoading}
 					runCode={runCode}
 					userInfo={userInfo}
 				/>
@@ -143,7 +141,11 @@ export default function CodeEditor({ fileId }) {
 					</div>
 
 					<div className={styles.codeEditor__inputOutputSection}>
-						<InputOutputSection />
+						<InputOutputSection
+							onSendInput={sendInput}
+							isRunning={isRunning}
+							waitingForInput={waitingForInput}
+						/>
 					</div>
 				</div>
 			</div>

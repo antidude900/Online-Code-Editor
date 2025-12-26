@@ -69,5 +69,3 @@ export default function SendEmail() {
 		</Dropdown>
 	);
 }
-
-// send("a", `Code:\n${code},Input:\n${input},Output:\n${output}`)

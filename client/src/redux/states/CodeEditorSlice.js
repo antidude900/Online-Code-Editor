@@ -3,17 +3,18 @@ import { CODE_SNIPPETS } from "../../constants";
 
 const initialState = {
 	codeByLanguage: {
-		javascript: CODE_SNIPPETS.javascript,
 		python: CODE_SNIPPETS.python,
+		javascript: CODE_SNIPPETS.javascript,
 		c: CODE_SNIPPETS.c,
 		cpp: CODE_SNIPPETS.cpp,
 	},
-	code: CODE_SNIPPETS.javascript,
-	language: "javascript",
-	output: [],
+	code: CODE_SNIPPETS.python,
+	language: "python",
+	output: "",
 	input: "",
 	isLoading: false,
-	isError: null,
+	error: null,
+	isInteractive: true,
 };
 
 const CodeEditorSlice = createSlice({
@@ -42,8 +43,12 @@ const CodeEditorSlice = createSlice({
 			state[property] = value;
 		},
 
+		appendOutput: (state, action) => {
+			state.output = state.output + action.payload;
+		},
+
 		clearOutput: (state) => {
-			state.output = [];
+			state.output = "";
 			state.isError = null;
 		},
 
@@ -56,6 +61,7 @@ export const {
 	updateAllCode,
 	switchLanguage,
 	setEditorProperty,
+	appendOutput,
 	clearOutput,
 	resetToInitialState,
 } = CodeEditorSlice.actions;

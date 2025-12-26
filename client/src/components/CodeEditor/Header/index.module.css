@@ -44,6 +44,32 @@
 	width: 100%;
 }
 
+.header__interactiveButtonContainer {
+	display: flex;
+	gap: 10px;
+	flex-direction: center;
+	align-items: center;
+}
+.header__interactiveButtonLabel {
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.header__interactiveButton {
+	border: 5px solid #44475a;
+	border-radius: 50%;
+	background-color: transparent;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+}
+.header__interactiveButton:hover {
+	border-color: #6272a4;
+}
+
+.header__interactiveButtonActive {
+	background-color: #50fa7b;
+}
 .header__rightSectionButtons {
 	display: flex;
 	gap: 16px;
@@ -137,6 +163,6 @@
 	.header__rightSection {
 		width: 40vw;
 		margin-left: 40px;
-		justify-content: flex-end;
+		justify-content: space-between;
 	}
 }

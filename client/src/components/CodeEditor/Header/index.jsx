@@ -11,22 +11,43 @@ import Logout from "@/components/shared/Logout.jsx";
 import Button from "@/components/shared/Button.jsx";
 import AuthForm from "@/components/shared/AuthForm";
 import styles from "./index.module.css";
+import { useExecutionWebSocket } from "@/hooks/useExecutionWebSocket.js";
+import { useDispatch, useSelector } from "react-redux";
+import { setEditorProperty } from "@/redux/states/CodeEditorSlice.js";
 
 export default function Header({
 	file,
 	fileId,
 	codeByLanguage,
-	isLoading,
 	runCode,
 	userInfo,
 }) {
 	const [open, setOpen] = useState(false);
+	const { isConnected, isRunning, stopExecution } = useExecutionWebSocket();
+	const { isInteractive } = useSelector((state) => state.codeEditor);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		if (userInfo) {
 			setOpen(false);
 		}
 	}, [userInfo]);
+	useEffect(() => {
+		if (!isConnected) {
+			dispatch(
+				setEditorProperty({
+					property: "error",
+					value: true,
+				})
+			);
+			dispatch(
+				setEditorProperty({
+					property: "output",
+					value: "\n[Server is not connected]\n",
+				})
+			);
+		}
+	}, [isConnected]);
 
 	return (
 		<div className={styles.header__container}>
@@ -44,14 +65,48 @@ export default function Header({
 					<SendEmail />
 
 					<div>
-						<Button disabled={isLoading} onClick={runCode}>
-							Run
-						</Button>
+						{isRunning ? (
+							<Button
+								className="btn bg-red-600 hover:bg-red-700"
+								onClick={() => stopExecution()}
+							>
+								Stop
+							</Button>
+						) : (
+							<Button
+								className={`btn ${
+									!isConnected ? "cursor-not-allowed opacity-50" : ""
+								}`}
+								onClick={runCode}
+								disabled={!isConnected}
+								title={!isConnected ? "Connecting to server..." : "Run code"}
+							>
+								Run
+							</Button>
+						)}
 					</div>
 				</div>
 			</div>
 
 			<div className={styles.header__rightSection}>
+				<div className={styles.header__interactiveButtonContainer}>
+					<span className={styles.header__interactiveButtonLabel}>
+						Interactive
+					</span>
+					<button
+						className={`${styles.header__interactiveButton} ${
+							isInteractive && styles.header__interactiveButtonActive
+						}`}
+						onClick={() =>
+							dispatch(
+								setEditorProperty({
+									property: "isInteractive",
+									value: !isInteractive,
+								})
+							)
+						}
+					></button>
+				</div>
 				{userInfo ? (
 					<div className={styles.header__rightSectionButtons}>
 						<Logout />
@@ -98,7 +153,6 @@ Header.propTypes = {
 	file: PropTypes.object,
 	fileId: PropTypes.string,
 	codeByLanguage: PropTypes.object,
-	isLoading: PropTypes.bool,
 	runCode: PropTypes.func.isRequired,
 	userInfo: PropTypes.object,
 };
