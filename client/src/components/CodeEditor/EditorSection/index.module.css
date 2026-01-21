@@ -1,23 +1,77 @@
 .editorSection__container {
 	height: 80vh;
+	position: relative;
+}
+.editorSection__containerBorder {
 	border: 4px solid #6272a4;
 	border-radius: 10px;
 }
 
-.editorSection__loading {
-	height: 80vh;
-}
-
-.editorSection__content {
+.editorSection__editor {
 	background-color: #282a36;
 	height: 100%;
-	z-index: 1;
 	padding: 8px;
-	border: 1px solid transparent;
 	border-radius: 10px;
+	text-align: left;
+	position: relative;
+	z-index: 2;
 }
 
-.editorSection__editor {
+.editorSection__loadingOverlay {
+	position: absolute;
+	inset: -4px;
+	border-radius: 10px;
+	z-index: 1;
+	pointer-events: none;
+}
+
+@property --angle {
+	syntax: "<angle>";
+	initial-value: 0deg;
+	inherits: false;
+}
+
+.editorSection__loadingOverlay::after,
+.editorSection__loadingOverlay::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image: conic-gradient(
+		from var(--angle),
+		#1a202c,
+		#2d3748,
+		#253050,
+		#1f2937,
+		#1a202c
+	);
+	border-radius: 10px;
+	animation: 0.75s spin linear infinite;
+	mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+	padding: 4px;
+}
+
+@keyframes spin {
+	from {
+		--angle: 0deg;
+	}
+	to {
+		--angle: 360deg;
+	}
+}
+
+:global(.cm-editor) {
+	border-radius: 10px;
 	height: 100%;
-	text-align: left;
+}
+
+:global(.cm-editor.cm-focused) {
+	outline: none;
+}
+
+:global(.cm-editor .cm-content) {
+	font-size: 16px;
+	line-height: 1.5;
 }
