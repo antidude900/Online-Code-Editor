@@ -47,8 +47,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateCode } from "@/redux/states/CodeEditorSlice";
 import styles from "./index.module.css";
 
-export default function EditorSection({ codeByLanguage, language }) {
-	const { isLoading } = useSelector((state) => state.codeEditor);
+export default function EditorSection() {
+	const { codeByLanguage, language, isLoading } = useSelector(
+		(state) => state.codeEditor,
+	);
 
 	const dispatch = useDispatch();
 	const editor = useRef();
