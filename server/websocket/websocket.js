@@ -35,7 +35,7 @@ export function startWebSocketServer(server) {
 							JSON.stringify({
 								type: "stopped",
 								message: "Execution stopped by user",
-							})
+							}),
 						);
 						break;
 					default:
@@ -43,7 +43,7 @@ export function startWebSocketServer(server) {
 							JSON.stringify({
 								type: "error",
 								error: `Unknown message type: ${data.type}`,
-							})
+							}),
 						);
 				}
 			} catch (error) {
@@ -52,7 +52,7 @@ export function startWebSocketServer(server) {
 					JSON.stringify({
 						type: "error",
 						error: error.message,
-					})
+					}),
 				);
 			}
 		});
@@ -76,7 +76,7 @@ export function startWebSocketServer(server) {
 					JSON.stringify({
 						type: "error",
 						error: "Language and code are required",
-					})
+					}),
 				);
 				return;
 			}
@@ -102,7 +102,7 @@ export function startWebSocketServer(server) {
 						status: "starting",
 						message: "Starting execution...",
 						executionId,
-					})
+					}),
 				);
 
 				const { stream } = await dockerExecutionService.executeCode(
@@ -115,7 +115,7 @@ export function startWebSocketServer(server) {
 							// Only send if this is still the current execution
 							if (currentExecutionId !== executionId) {
 								console.log(
-									`Skipping output from old execution ${executionId}`
+									`Skipping output from old execution ${executionId}`,
 								);
 								return;
 							}
@@ -126,16 +126,16 @@ export function startWebSocketServer(server) {
 									type: "output",
 									data: output,
 									executionId,
-								})
+								}),
 							);
 
-							// Skip input_required if this is echo from last input
+							// Reset echo flag if this output is echoed input from the terminal.
+							// We still send input_required below to avoid missing real prompts in rapid succession.
 							if (ignoreNextOutput) {
 								console.log(
-									`[${executionId}] Ignoring output for input_required (echo)`
+									`[${executionId}] Ignoring output for input_required (echo)`,
 								);
 								ignoreNextOutput = false;
-								return;
 							}
 
 							// Signal that program might be waiting for input after output
@@ -144,7 +144,7 @@ export function startWebSocketServer(server) {
 									type: "input_required",
 									message: "Program may be waiting for input",
 									executionId,
-								})
+								}),
 							);
 						},
 					},
@@ -163,7 +163,7 @@ export function startWebSocketServer(server) {
 									type: "error",
 									data: error,
 									executionId,
-								})
+								}),
 							);
 						},
 					},
@@ -171,7 +171,7 @@ export function startWebSocketServer(server) {
 					(error, exitCode) => {
 						console.log(
 							`[${executionId}] Process exited with code ${exitCode}, error:`,
-							error
+							error,
 						);
 						// Only send exit if this is still the current execution
 						if (currentExecutionId === executionId) {
@@ -183,7 +183,7 @@ export function startWebSocketServer(server) {
 										type: "error",
 										error: error.message,
 										executionId,
-									})
+									}),
 								);
 							}
 							ws.send(
@@ -192,10 +192,10 @@ export function startWebSocketServer(server) {
 									exitCode: exitCode || 0,
 									message: "Execution completed",
 									executionId,
-								})
+								}),
 							);
 						}
-					}
+					},
 				);
 
 				containerStream = stream;
@@ -207,7 +207,7 @@ export function startWebSocketServer(server) {
 						status: "running",
 						message: "Execution started. You can send input now.",
 						executionId,
-					})
+					}),
 				);
 
 				// Notify client that program can accept input
@@ -216,7 +216,7 @@ export function startWebSocketServer(server) {
 						type: "input_required",
 						message: "Program is ready to accept input",
 						executionId,
-					})
+					}),
 				);
 			} catch (error) {
 				console.error(`[${currentExecutionId}] Execution error:`, error);
@@ -230,7 +230,7 @@ export function startWebSocketServer(server) {
 						type: "error",
 						error: error.message,
 						executionId,
-					})
+					}),
 				);
 
 				// Send exit message to stop running state
@@ -240,7 +240,7 @@ export function startWebSocketServer(server) {
 						exitCode: 1,
 						message: "Execution failed",
 						executionId,
-					})
+					}),
 				);
 			}
 		}
@@ -253,7 +253,7 @@ export function startWebSocketServer(server) {
 					JSON.stringify({
 						type: "error",
 						error: "No active execution to send input to",
-					})
+					}),
 				);
 				return;
 			}
@@ -271,7 +271,7 @@ export function startWebSocketServer(server) {
 					JSON.stringify({
 						type: "input-sent",
 						message: "Input sent successfully",
-					})
+					}),
 				);
 			} catch (error) {
 				console.error(`[${currentExecutionId}] Error sending input:`, error);
@@ -279,7 +279,7 @@ export function startWebSocketServer(server) {
 					JSON.stringify({
 						type: "error",
 						error: `Failed to send input: ${error.message}`,
-					})
+					}),
 				);
 			}
 		}
