@@ -18,7 +18,7 @@ import { useExecutionWebSocket } from "@/hooks/useExecutionWebSocket.js";
 
 export default function CodeEditor({ fileId }) {
 	const { code, language, codeByLanguage } = useSelector(
-		(state) => state.codeEditor
+		(state) => state.codeEditor,
 	);
 
 	const { userInfo } = useSelector((state) => state.auth);
@@ -35,6 +35,7 @@ export default function CodeEditor({ fileId }) {
 		waitingForInput,
 		executeCode: wsExecuteCode,
 		sendInput,
+		stopExecution,
 	} = useExecutionWebSocket();
 
 	const {
@@ -134,6 +135,9 @@ export default function CodeEditor({ fileId }) {
 					codeByLanguage={codeByLanguage}
 					runCode={runCode}
 					userInfo={userInfo}
+					isConnected={isConnected}
+					isRunning={isRunning}
+					stopExecution={stopExecution}
 				/>
 				<div className={styles.codeEditor__content}>
 					<div className={styles.codeEditor__editor}>

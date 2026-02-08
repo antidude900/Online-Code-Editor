@@ -11,7 +11,6 @@ import Logout from "@/components/shared/Logout.jsx";
 import Button from "@/components/shared/Button.jsx";
 import AuthForm from "@/components/shared/AuthForm";
 import styles from "./index.module.css";
-import { useExecutionWebSocket } from "@/hooks/useExecutionWebSocket.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setEditorProperty } from "@/redux/states/CodeEditorSlice.js";
 
@@ -21,9 +20,11 @@ export default function Header({
 	codeByLanguage,
 	runCode,
 	userInfo,
+	isConnected,
+	isRunning,
+	stopExecution,
 }) {
 	const [open, setOpen] = useState(false);
-	const { isConnected, isRunning, stopExecution } = useExecutionWebSocket();
 	const { isInteractive } = useSelector((state) => state.codeEditor);
 	const dispatch = useDispatch();
 
@@ -38,13 +39,13 @@ export default function Header({
 				setEditorProperty({
 					property: "error",
 					value: true,
-				})
+				}),
 			);
 			dispatch(
 				setEditorProperty({
 					property: "output",
 					value: "\n[Server is not connected]\n",
-				})
+				}),
 			);
 		}
 	}, [isConnected]);
@@ -67,7 +68,7 @@ export default function Header({
 					<div>
 						{isRunning ? (
 							<Button
-								className="btn bg-red-600 hover:bg-red-700"
+								className={styles.stopButton}
 								onClick={() => stopExecution()}
 							>
 								Stop
@@ -102,7 +103,7 @@ export default function Header({
 								setEditorProperty({
 									property: "isInteractive",
 									value: !isInteractive,
-								})
+								}),
 							)
 						}
 					></button>
@@ -155,4 +156,7 @@ Header.propTypes = {
 	codeByLanguage: PropTypes.object,
 	runCode: PropTypes.func.isRequired,
 	userInfo: PropTypes.object,
+	isConnected: PropTypes.bool.isRequired,
+	isRunning: PropTypes.bool.isRequired,
+	stopExecution: PropTypes.func.isRequired,
 };

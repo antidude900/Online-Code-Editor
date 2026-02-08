@@ -3,19 +3,22 @@ import { v4 as uuidv4 } from "uuid";
 import dockerExecutionService from "../services/dockerExecutionService.js";
 
 export function startWebSocketServer(server) {
+	// Configured the current server to support webSocket connection
 	const wss = new WebSocketServer({
 		server,
-		path: "/ws/execute",
+		ath: "/ws/execute",
 	});
 
+	//Atfer setting up connection with a client, we listen for different type of message/requests
 	wss.on("connection", (ws) => {
-		const connectionId = uuidv4();
+		const connectionId = uuidv4(); // to uniquenly identify each connection in logs
 		console.log(`New WebSocket connection: ${connectionId}`);
 
 		let containerStream = null;
 		let currentExecutionId = null;
 		let ignoreNextOutput = false;
 
+		//handling messages from the client
 		ws.on("message", async (message) => {
 			try {
 				const data = JSON.parse(message.toString());
@@ -28,15 +31,8 @@ export function startWebSocketServer(server) {
 					case "input":
 						await handleInput(data, containerStream);
 						break;
-
 					case "stop":
 						await handleStop();
-						ws.send(
-							JSON.stringify({
-								type: "stopped",
-								message: "Execution stopped by user",
-							}),
-						);
 						break;
 					default:
 						ws.send(
@@ -57,6 +53,7 @@ export function startWebSocketServer(server) {
 			}
 		});
 
+		// handling the websocket connection closed condition
 		ws.on("close", () => {
 			console.log(`WebSocket closed: ${connectionId}`);
 			if (currentExecutionId) {
@@ -64,10 +61,12 @@ export function startWebSocketServer(server) {
 			}
 		});
 
+		// handling any error occured in the websocket connection
 		ws.on("error", (error) => {
 			console.error(`WebSocket error for ${connectionId}:`, error);
 		});
 
+		// handles the code execution request from the client
 		async function handleExecute(ws, data) {
 			const { language, code, executionId: clientExecutionId } = data;
 
@@ -129,8 +128,7 @@ export function startWebSocketServer(server) {
 								}),
 							);
 
-							// Reset echo flag if this output is echoed input from the terminal.
-							// We still send input_required below to avoid missing real prompts in rapid succession.
+							// Skip input_required if this is echo from last input
 							if (ignoreNextOutput) {
 								console.log(
 									`[${executionId}] Ignoring output for input_required (echo)`,
@@ -245,6 +243,7 @@ export function startWebSocketServer(server) {
 			}
 		}
 
+		// handles the input for the code sent by the client
 		async function handleInput(data, stream) {
 			const { input } = data;
 
@@ -266,13 +265,6 @@ export function startWebSocketServer(server) {
 
 				// Ignore next output (likely echo)
 				ignoreNextOutput = true;
-
-				ws.send(
-					JSON.stringify({
-						type: "input-sent",
-						message: "Input sent successfully",
-					}),
-				);
 			} catch (error) {
 				console.error(`[${currentExecutionId}] Error sending input:`, error);
 				ws.send(
@@ -284,6 +276,7 @@ export function startWebSocketServer(server) {
 			}
 		}
 
+		// handles the stop action by the client
 		async function handleStop() {
 			try {
 				if (currentExecutionId) {

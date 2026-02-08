@@ -37,6 +37,14 @@
 	width: 100%;
 }
 
+.stopButton {
+	background-color: #dc2626 ;
+}
+
+.stopButton:hover {
+	background-color: #b91c1c;
+}
+
 .header__rightSection {
 	display: flex;
 	align-items: center;

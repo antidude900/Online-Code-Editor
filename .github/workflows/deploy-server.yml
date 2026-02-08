@@ -1,0 +1,36 @@
+name: Deploy Server to VM
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "server/**"
+      - ".github/workflows/deploy-server.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to VM via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            # Pull latest changes from Github
+            cd ~/Online-Code-Editor
+            git pull origin main
+
+            # Install dependencies
+            cd server
+            npm install 
+
+            # Restart server with PM2
+            pm2 restart server || pm2 start index.js --name server
+            pm2 status

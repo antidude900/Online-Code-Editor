@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	setEditorProperty,
 	appendOutput,
@@ -20,7 +20,9 @@ export function useExecutionWebSocket() {
 		dispatch(setEditorProperty({ property, value }));
 	};
 
-	const connect = useCallback(() => {
+	// Setup WebSocket connection with the server
+	const connect = () => {
+		// if already connected, abort the connection process
 		if (wsRef.current?.readyState === WebSocket.OPEN) {
 			return;
 		}
@@ -34,6 +36,7 @@ export function useExecutionWebSocket() {
 				updateEditorProperty("error", null);
 			};
 
+			// capture the message sent by the server through websocket and handle it
 			ws.onmessage = (event) => {
 				try {
 					const message = JSON.parse(event.data);
@@ -47,6 +50,7 @@ export function useExecutionWebSocket() {
 				console.error("WebSocket error:", error);
 			};
 
+			// if the websocket connection closed, try reconnecting
 			ws.onclose = () => {
 				console.log("WebSocket disconnected");
 				setIsConnected(false);
@@ -63,10 +67,11 @@ export function useExecutionWebSocket() {
 		} catch (err) {
 			console.error("Failed to create WebSocket connection:", err);
 		}
-	}, []);
+	};
 
+	// handling Messages from the server
 	const handleMessage = (message) => {
-		// Ignore messages from old executions
+		// If the output from the previous execution just came when running a new execution, ignore it
 		if (
 			message.executionId &&
 			message.executionId !== currentExecutionIdRef.current
@@ -76,10 +81,12 @@ export function useExecutionWebSocket() {
 		}
 
 		switch (message.type) {
+			// If message type is output, update our output of the code editor with the new one
 			case "output":
 				dispatch(appendOutput(message.data));
 				break;
 
+			// If its an error, we still have to show the error of the execution of the code in the output as well
 			case "error":
 				if (message.data) {
 					dispatch(appendOutput(message.data));
@@ -87,6 +94,7 @@ export function useExecutionWebSocket() {
 				updateEditorProperty("error", true);
 				break;
 
+			// Acknowleding the code recieved and alerting that the code is in executiion
 			case "status":
 				console.log("Status:", message.message);
 				if (message.status === "running") {
@@ -94,6 +102,7 @@ export function useExecutionWebSocket() {
 				}
 				break;
 
+			// Alerting the completetion of code exectution
 			case "exit":
 				console.log("Execution completed with exit code:", message.exitCode);
 				setIsRunning(false);
@@ -108,21 +117,10 @@ export function useExecutionWebSocket() {
 				}
 				break;
 
-			case "stopped":
-				console.log("Execution stopped");
-				setIsRunning(false);
-				setWaitingForInput(false);
-				currentExecutionIdRef.current = null;
-				break;
-
+			// Asking for input from client
 			case "input_required":
 				console.log("Program waiting for input");
 				setWaitingForInput(true);
-				break;
-
-			case "input-sent":
-				console.log("Input sent successfully");
-				setWaitingForInput(false);
 				break;
 
 			default:
@@ -130,7 +128,7 @@ export function useExecutionWebSocket() {
 		}
 	};
 
-	const executeCode = useCallback((language, code) => {
+	const executeCode = (language, code) => {
 		if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
 			return;
 		}
@@ -139,7 +137,7 @@ export function useExecutionWebSocket() {
 		const executionId = Date.now().toString();
 		currentExecutionIdRef.current = executionId;
 
-		// Immediately clear output and reset state
+		// Clear Previous output and states related to the output
 		updateEditorProperty("output", "");
 		updateEditorProperty("error", null);
 		setIsRunning(true);
@@ -151,25 +149,26 @@ export function useExecutionWebSocket() {
 				language,
 				code,
 				executionId,
-			})
+			}),
 		);
-	}, []);
+	};
 
-	const sendInput = useCallback((input) => {
+	const sendInput = (input) => {
 		if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
 			return;
 		}
 
+		setWaitingForInput(false);
 		wsRef.current.send(
 			JSON.stringify({
 				type: "input",
 				input,
-			})
+			}),
 		);
-	}, []);
+	};
 
-	const stopExecution = useCallback(() => {
-		// Immediately update UI state and clear execution ID
+	const stopExecution = () => {
+		// Reset output UI state and clear execution ID
 		const stoppedExecutionId = currentExecutionIdRef.current;
 		currentExecutionIdRef.current = null;
 		setIsRunning(false);
@@ -185,13 +184,14 @@ export function useExecutionWebSocket() {
 			JSON.stringify({
 				type: "stop",
 				executionId: stoppedExecutionId,
-			})
+			}),
 		);
-	}, [dispatch]);
+	};
 
 	useEffect(() => {
 		connect();
 
+		// After the component using the hook unmounts, we clear the timer for reconnect(if exists) and also close the websocket connection
 		return () => {
 			if (reconnectTimeoutRef.current) {
 				clearTimeout(reconnectTimeoutRef.current);
@@ -200,7 +200,8 @@ export function useExecutionWebSocket() {
 				wsRef.current.close();
 			}
 		};
-	}, [connect]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return {
 		isConnected,
