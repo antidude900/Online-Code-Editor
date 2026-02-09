@@ -6,7 +6,7 @@ export function startWebSocketServer(server) {
 	// Configured the current server to support webSocket connection
 	const wss = new WebSocketServer({
 		server,
-		ath: "/ws/execute",
+		path: "/ws/execute",
 	});
 
 	//Atfer setting up connection with a client, we listen for different type of message/requests
@@ -16,7 +16,6 @@ export function startWebSocketServer(server) {
 
 		let containerStream = null;
 		let currentExecutionId = null;
-		let ignoreNextOutput = false;
 
 		//handling messages from the client
 		ws.on("message", async (message) => {
@@ -108,86 +107,62 @@ export function startWebSocketServer(server) {
 					executionId,
 					language,
 					code,
-					// stdout handler
-					{
-						write: (chunk) => {
-							// Only send if this is still the current execution
-							if (currentExecutionId !== executionId) {
-								console.log(
-									`Skipping output from old execution ${executionId}`,
-								);
-								return;
-							}
-							const output = chunk.toString();
-							console.log(`[${executionId}] stdout:`, output);
-							ws.send(
-								JSON.stringify({
-									type: "output",
-									data: output,
-									executionId,
-								}),
-							);
+					// sendOutput
+					(chunk) => {
+						// Only send if this is still the current execution
+						if (currentExecutionId !== executionId) {
+							console.log(`Skipping output from old execution ${executionId}`);
+							return;
+						}
+						const output = chunk.toString();
+						console.log(`[${executionId}] stdout:`, output);
+						ws.send(
+							JSON.stringify({
+								type: "output",
+								data: output,
+								executionId,
+							}),
+						);
 
-							// Skip input_required if this is echo from last input
-							if (ignoreNextOutput) {
-								console.log(
-									`[${executionId}] Ignoring output for input_required (echo)`,
-								);
-								ignoreNextOutput = false;
-							}
-
-							// Signal that program might be waiting for input after output
-							ws.send(
-								JSON.stringify({
-									type: "input_required",
-									message: "Program may be waiting for input",
-									executionId,
-								}),
-							);
-						},
+						// Signal that program might be waiting for input after output
+						ws.send(
+							JSON.stringify({
+								type: "input_required",
+								message: "Program may be waiting for input",
+								executionId,
+							}),
+						);
 					},
-					// stderr handler
-					{
-						write: (chunk) => {
-							// Only send if this is still the current execution
-							if (currentExecutionId !== executionId) {
-								console.log(`Skipping error from old execution ${executionId}`);
-								return;
-							}
-							const error = chunk.toString();
-							console.log(`[${executionId}] stderr:`, error);
-							ws.send(
-								JSON.stringify({
-									type: "error",
-									data: error,
-									executionId,
-								}),
-							);
-						},
+					// sendError
+					(chunk) => {
+						// Only send if this is still the current execution
+						if (currentExecutionId !== executionId) {
+							console.log(`Skipping error from old execution ${executionId}`);
+							return;
+						}
+						const error = chunk.toString();
+						console.log(`[${executionId}] stderr:`, error);
+						ws.send(
+							JSON.stringify({
+								type: "error",
+								data: error,
+								executionId,
+							}),
+						);
 					},
-					// exit handler
-					(error, exitCode) => {
+					// onExit
+					(exitCode) => {
 						console.log(
-							`[${executionId}] Process exited with code ${exitCode}, error:`,
-							error,
+							`[${executionId}] Process exited with code ${exitCode}`,
 						);
 						// Only send exit if this is still the current execution
 						if (currentExecutionId === executionId) {
 							containerStream = null;
 							currentExecutionId = null;
-							if (error) {
-								ws.send(
-									JSON.stringify({
-										type: "error",
-										error: error.message,
-										executionId,
-									}),
-								);
-							}
 							ws.send(
 								JSON.stringify({
 									type: "exit",
-									exitCode: exitCode || 0,
+									exitCode: exitCode,
 									message: "Execution completed",
 									executionId,
 								}),
@@ -243,7 +218,7 @@ export function startWebSocketServer(server) {
 			}
 		}
 
-		// handles the input for the code sent by the client
+		// sends the input for the code sent by the client to the docker via stream instance we got from dockerExecutionService's Execute Code   
 		async function handleInput(data, stream) {
 			const { input } = data;
 
@@ -262,9 +237,6 @@ export function startWebSocketServer(server) {
 				// Send input directly to the container's stdin with newline
 				const success = stream.write(`${input}\n`);
 				console.log(`[${currentExecutionId}] Input write success:`, success);
-
-				// Ignore next output (likely echo)
-				ignoreNextOutput = true;
 			} catch (error) {
 				console.error(`[${currentExecutionId}] Error sending input:`, error);
 				ws.send(

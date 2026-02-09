@@ -11,7 +11,6 @@ const initialState = {
 	code: CODE_SNIPPETS.python,
 	language: "python",
 	output: "",
-	input: "",
 	isLoading: false,
 	error: null,
 	isInteractive: true,

@@ -35,11 +35,12 @@ const LANGUAGE_CONFIGS = {
 
 class DockerExecutionService {
 	constructor() {
-		this.activeExecutions = new Map(); // sessionId -> container
-		this.languageContainers = new Map(); // language -> containerInfo
-		this.initialized = false;
+		this.activeExecutions = new Map(); // stores the sessionId of each execution request and the info of the container its using
+		this.languageContainers = new Map(); // stores the languages of existing containers and the info of the container
+		this.initialized = false; // flag to know if the docker has already been initalized or not
 	}
 
+	// initializing the docker by enabling the containers of the required languages
 	async initialize() {
 		if (this.initialized) return;
 
@@ -67,18 +68,12 @@ class DockerExecutionService {
 				if (containerData.State !== "running") {
 					try {
 						console.log(
-							`Starting existing ${language} container ${containerData.Id.substring(
-								0,
-								12
-							)}...`
+							`Starting existing ${language} container ${containerData.Id}...`,
 						);
 						await container.start();
 					} catch (error) {
 						console.log(
-							`Could not start container ${containerData.Id.substring(
-								0,
-								12
-							)}: ${error.message}`
+							`Could not start container ${containerData.Id}: ${error.message}`,
 						);
 						continue;
 					}
@@ -90,25 +85,22 @@ class DockerExecutionService {
 					language: language,
 				};
 
+				// storing all those containers in the languageContainers which were successully started
 				this.languageContainers.set(language, containerInfo);
-				console.log(
-					`Found existing ${language} container ${containerData.Id.substring(
-						0,
-						12
-					)}`
-				);
+				console.log(`Found existing ${language} container ${containerData.Id}`);
 			}
 		}
 
 		console.log(
 			`Containers initialized: ${Array.from(
-				this.languageContainers.keys()
-			).join(", ")}`
+				this.languageContainers.keys(),
+			).join(", ")}`,
 		);
 		this.initialized = true;
 	}
 
-	async pullImageIfNeeded(imageName) {
+	// to pull the images of those containers which havent been created
+	async pullImage(imageName) {
 		try {
 			await docker.getImage(imageName).inspect();
 			console.log(`Image ${imageName} already exists`);
@@ -129,15 +121,16 @@ class DockerExecutionService {
 							if (event.status) {
 								console.log(`${imageName}: ${event.status}`);
 							}
-						}
+						},
 					);
 				});
 			});
 		}
 	}
 
+	// to get the container of the specific language; if doesnt exists, then we create one
 	async getOrCreateContainer(language) {
-		// Ensure initialized
+		// Ensure if docker is already initialized with the existing containers
 		await this.initialize();
 
 		const config = LANGUAGE_CONFIGS[language];
@@ -145,59 +138,45 @@ class DockerExecutionService {
 			throw new Error(`Unsupported language: ${language}`);
 		}
 
-		// Check if we already have a container for this language
+		// If we already have a container for the specific language, we just return the container
 		if (this.languageContainers.has(language)) {
 			const containerInfo = this.languageContainers.get(language);
 
-			// Verify the container still exists and is running
+			// The specific container might stop or pause in between after initializtion
+			// (initialization only happens again only if the server restarts after crashing or stopping)
+			// So double checking to avioid such case
 			try {
 				const inspectData = await containerInfo.container.inspect();
 
-				// Check if container is stopped or paused and restart/unpause
 				if (!inspectData.State.Running) {
 					console.log(
-						`Container ${containerInfo.id.substring(
-							0,
-							12
-						)} is stopped, restarting...`
+						`Container ${containerInfo.id} is stopped, restarting...`,
 					);
 					await containerInfo.container.start();
 				} else if (inspectData.State.Paused) {
-					console.log(
-						`Container ${containerInfo.id.substring(
-							0,
-							12
-						)} is paused, unpausing...`
-					);
+					console.log(`Container ${containerInfo.id} is paused, unpausing...`);
 					await containerInfo.container.unpause();
 				}
 
 				console.log(
-					`Using existing container ${containerInfo.id.substring(
-						0,
-						12
-					)} for ${language}`
+					`Using existing container ${containerInfo.id} for ${language}`,
 				);
 				return containerInfo;
 			} catch (error) {
 				// Container no longer exists, remove it and create a new one
 				console.log(
-					`Container ${containerInfo.id.substring(
-						0,
-						12
-					)} no longer exists, creating new one`
+					`Container ${containerInfo.id} no longer exists, creating new one`,
 				);
 				this.languageContainers.delete(language);
 			}
 		}
 
-		// Create a new container for this language
+		// If container for that language doesn't exist, we create one
 		console.log(`Creating new container for ${language}`);
 
-		// Pull image if needed
-		await this.pullImageIfNeeded(config.image);
+		// Pull image for the new container
+		await this.pullImage(config.image);
 
-		// Create a persistent container
 		const container = await docker.createContainer({
 			Image: config.image,
 			Cmd: ["/bin/sh", "-c", "while true; do sleep 1; done"], // Keep container alive
@@ -223,16 +202,17 @@ class DockerExecutionService {
 		};
 
 		this.languageContainers.set(language, containerInfo);
-		console.log(
-			`Created container ${container.id.substring(0, 12)} for ${language}`
-		);
+		console.log(`Created container ${container.id} for ${language}`);
 
 		return containerInfo;
 	}
 
+	// To put content directly in the file of docker, we need the content to be pushed in archived format
 	async createTarStreamFromCode(language, code) {
 		const config = LANGUAGE_CONFIGS[language];
 		const filename = `main.${config.fileExtension}`;
+
+		// Using streaming to make the HTTP Uploads our websocket server to the Docker server more efficient
 		const tar = await import("tar-stream");
 		const pack = tar.pack();
 
@@ -245,7 +225,7 @@ class DockerExecutionService {
 		return pack;
 	}
 
-	async executeCode(sessionId, language, code, onOutput, onError, onExit) {
+	async executeCode(sessionId, language, code, sendOutput, sendError, onExit) {
 		const config = LANGUAGE_CONFIGS[language];
 		if (!config) {
 			throw new Error(`Unsupported language: ${language}`);
@@ -256,38 +236,47 @@ class DockerExecutionService {
 			const containerInfo = await this.getOrCreateContainer(language);
 			const container = containerInfo.container;
 
-			// Track this execution
+			// Track this active execution and the container it's using
 			this.activeExecutions.set(sessionId, containerInfo);
 
 			console.log(
-				`Executing code in container ${containerInfo.id.substring(
-					0,
-					12
-				)} for session ${sessionId}`
+				`Executing code in container ${containerInfo.id} for session ${sessionId}`,
 			);
 
-			// Create /code directory in container
+			// When a source file is executed, it is loaded into the memory and acts as isloated process, and the write->execute happens very fast
+			// So changes to the same source file by another user wont affect the process at all
+			// But still if there are large no of users, the chance of multiple users doing write action to a file at the same time is possible
+			// Hence we create a unique directory for each execution to avoid conflicts between concurrent executions
+			const execPath = `/code/${sessionId}`;
 			await container
 				.exec({
-					Cmd: ["mkdir", "-p", "/code"],
+					Cmd: ["mkdir", "-p", execPath],
 					AttachStdout: false,
 					AttachStderr: false,
 				})
 				.then((exec) => exec.start({ Detach: true }));
 
-			// Copy code file into container directly from memory
+			// Copy code file into container's unique directory
 			const tarStream = await this.createTarStreamFromCode(language, code);
-			await container.putArchive(tarStream, { path: "/code" });
+			await container.putArchive(tarStream, { path: execPath });
+			console.log(`Source Code in directory ${execPath}`);
+
+			// Build command with the unique execution path
+			const execCommand = config.command.map((arg) =>
+				arg.replace("/code/", `${execPath}/`),
+			);
 
 			// Execute code in the container using exec
 			const exec = await container.exec({
-				Cmd: config.command,
+				Cmd: execCommand,
 				AttachStdin: true,
 				AttachStdout: true,
 				AttachStderr: true,
 				Tty: true,
 			});
 
+			// creating a bidirectional stream with the execution instance so that we can send input
+			// stream.write() sends the data to the stdin
 			const stream = await exec.start({
 				hijack: true,
 				stdin: true,
@@ -296,17 +285,17 @@ class DockerExecutionService {
 
 			stream.setEncoding("utf8");
 
-			// Handle output
+			// removing the extra metadata attached from the output
 			stream.on("data", (chunk) => {
 				let output = chunk.toString("utf8");
 				output = output.replace(
 					/\{"stream":true,"stdin":true,"stdout":true,"stderr":true,"hijack":true\}/g,
-					""
+					"",
 				);
 
 				if (output.length > 0) {
 					console.log(`[${sessionId}] Output:`, output);
-					onOutput.write(Buffer.from(output));
+					sendOutput(Buffer.from(output));
 				}
 			});
 
@@ -318,20 +307,37 @@ class DockerExecutionService {
 					const inspectData = await exec.inspect();
 					const exitCode = inspectData.ExitCode || 0;
 
-					// Clean up this execution
-					this.activeExecutions.delete(sessionId);
+					// Clean up the execution directory
+					try {
+						await container
+							.exec({
+								Cmd: ["rm", "-rf", execPath],
+								AttachStdout: false,
+								AttachStderr: false,
+							})
+							.then((exec) => exec.start({ Detach: true }));
+						console.log(`[${sessionId}] Cleaned up directory ${execPath}`);
+					} catch (cleanupError) {
+						console.error(
+							`[${sessionId}] Failed to cleanup directory:`,
+							cleanupError,
+						);
+					}
 
-					onExit(null, exitCode);
+					onExit(exitCode);
 				} catch (error) {
-					console.error(`[${sessionId}] Error inspecting exec:`, error);
-					this.activeExecutions.delete(sessionId);
-					onExit(null, 0);
+					console.error(
+						`[${sessionId}] Error inspecting execution exitCode:`,
+						error,
+					);
+					onExit(1);
 				}
+				this.activeExecutions.delete(sessionId);
 			});
 
 			stream.on("error", (err) => {
 				console.error(`[${sessionId}] Stream error:`, err);
-				onError.write(Buffer.from(err.message));
+				sendError(Buffer.from(err.message));
 
 				// Clean up this execution
 				this.activeExecutions.delete(sessionId);
@@ -353,10 +359,7 @@ class DockerExecutionService {
 		if (containerInfo) {
 			try {
 				console.log(
-					`Stopping execution ${sessionId} in container ${containerInfo.id.substring(
-						0,
-						12
-					)}`
+					`Stopping execution ${sessionId} in container ${containerInfo.id}`,
 				);
 				// Just clean up the execution tracking
 				this.activeExecutions.delete(sessionId);
@@ -377,17 +380,9 @@ class DockerExecutionService {
 			try {
 				await containerInfo.container.stop({ t: 1 });
 				await containerInfo.container.remove();
-				console.log(
-					`Removed container ${containerInfo.id.substring(
-						0,
-						12
-					)} for ${language}`
-				);
+				console.log(`Removed container ${containerInfo.id} for ${language}`);
 			} catch (error) {
-				console.error(
-					`Error removing container ${containerInfo.id.substring(0, 12)}:`,
-					error
-				);
+				console.error(`Error removing container ${containerInfo.id}:`, error);
 			}
 		}
 		this.languageContainers.clear();

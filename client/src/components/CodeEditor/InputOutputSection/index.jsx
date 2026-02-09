@@ -1,8 +1,8 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import { PLACEHOLDER } from "../../../constants";
-import { useDispatch, useSelector } from "react-redux";
-import { setEditorProperty } from "../../../redux/states/CodeEditorSlice";
+import { useSelector } from "react-redux";
 import styles from "./index.module.css";
 
 export default function InputOutputSection({
@@ -10,13 +10,13 @@ export default function InputOutputSection({
 	isRunning,
 	waitingForInput,
 }) {
-	const { output, error, input, isInteractive } = useSelector(
-		(state) => state.codeEditor
+	const { output, error, isInteractive } = useSelector(
+		(state) => state.codeEditor,
 	);
-	const dispatch = useDispatch();
 	const [interactiveInput, setInteractiveInput] = useState("");
 	const [isScrollableDown, setIsScrollableDown] = useState(false);
 	const [isScrollableUp, setIsScrollableUp] = useState(false);
+	const [batchInput, setBatchInput] = useState("");
 	const textareaRef = useRef(null);
 	const outputRef = useRef(null);
 	const inputRef = useRef(null);
@@ -34,6 +34,34 @@ export default function InputOutputSection({
 
 			setIsScrollableDown(isScrollable && !isAtBottom);
 			setIsScrollableUp(isScrollable && !isAtTop);
+		}
+	};
+
+	const scrollToBottom = () => {
+		if (textareaRef.current)
+			textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+	};
+
+	const scrollToTop = () => {
+		if (textareaRef.current) textareaRef.current.scrollTop = 0;
+	};
+
+	const handleInputChange = (e) => {
+		setBatchInput(e.target.value);
+		checkIfScrollable();
+	};
+
+	const handleKeyPress = (e) => {
+		if (e.key === "Enter" && waitingForInput) {
+			e.preventDefault();
+			sendInput();
+		}
+	};
+
+	const sendInput = () => {
+		if (interactiveInput.trim() && waitingForInput && onSendInput) {
+			onSendInput(interactiveInput);
+			setInteractiveInput("");
 		}
 	};
 
@@ -63,15 +91,15 @@ export default function InputOutputSection({
 
 	// Update input list when input textarea changes
 	useEffect(() => {
-		if (!isInteractive && input) {
+		if (!isInteractive && batchInput) {
 			// Split input by newlines and filter out empty lines
-			inputListRef.current = input
+			inputListRef.current = batchInput
 				.split("\n")
 				.filter((line) => line.trim() !== "");
 		} else {
 			inputListRef.current = [];
 		}
-	}, [input, isInteractive]);
+	}, [batchInput, isInteractive]);
 
 	// Reset input index when execution starts
 	useEffect(() => {
@@ -80,8 +108,8 @@ export default function InputOutputSection({
 		}
 	}, [isRunning]);
 
-	// Auto-send input when waiting for input
 	useEffect(() => {
+		// (for non-interactive mode)
 		if (waitingForInput && !isInteractive) {
 			// Get the input value or empty string if index exceeds length
 			const inputValue =
@@ -94,39 +122,11 @@ export default function InputOutputSection({
 			// Send the input automatically
 			onSendInput(inputValue);
 		}
-		// Focus input when waiting for input (for interactive mode)
+		// (for interactive mode)
 		if (waitingForInput && inputRef.current && isInteractive) {
 			inputRef.current.focus();
 		}
 	}, [waitingForInput, isInteractive, onSendInput]);
-
-	const scrollToBottom = () => {
-		if (textareaRef.current)
-			textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
-	};
-
-	const scrollToTop = () => {
-		if (textareaRef.current) textareaRef.current.scrollTop = 0;
-	};
-
-	const handleInputChange = (e) => {
-		dispatch(setEditorProperty({ property: "input", value: e.target.value }));
-		checkIfScrollable();
-	};
-
-	const handleKeyPress = (e) => {
-		if (e.key === "Enter" && waitingForInput) {
-			e.preventDefault();
-			sendInput();
-		}
-	};
-
-	const sendInput = () => {
-		if (interactiveInput.trim() && waitingForInput && onSendInput) {
-			onSendInput(interactiveInput);
-			setInteractiveInput("");
-		}
-	};
 
 	return (
 		<div className={styles.inputOutput}>
@@ -143,16 +143,18 @@ export default function InputOutputSection({
 							isRunning
 								? styles.borderGreen
 								: !output
-								? styles.borderGray
-								: !error
-								? styles.borderGreenDark
-								: styles.borderRed
+									? styles.borderGray
+									: !error
+										? styles.borderGreenDark
+										: styles.borderRed
 						}`}
 					>
 						<textarea
 							ref={textareaRef}
 							className={`${styles.inputOutput__inputBoxTextarea} ${
-								input === "" ? styles.inputOutput__inputBoxTextareaEmpty : ""
+								batchInput === ""
+									? styles.inputOutput__inputBoxTextareaEmpty
+									: ""
 							}`}
 							placeholder={PLACEHOLDER}
 							onChange={handleInputChange}
@@ -200,10 +202,10 @@ export default function InputOutputSection({
 						isRunning
 							? styles.borderGreen
 							: !output
-							? styles.borderGray
-							: !error
-							? styles.borderGreenDark
-							: styles.borderRed
+								? styles.borderGray
+								: !error
+									? styles.borderGreenDark
+									: styles.borderRed
 					}`}
 				>
 					<div className={styles.inputOutput__output} ref={outputRef}>

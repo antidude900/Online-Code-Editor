@@ -75,9 +75,6 @@ export default function Header({
 							</Button>
 						) : (
 							<Button
-								className={`btn ${
-									!isConnected ? "cursor-not-allowed opacity-50" : ""
-								}`}
 								onClick={runCode}
 								disabled={!isConnected}
 								title={!isConnected ? "Connecting to server..." : "Run code"}

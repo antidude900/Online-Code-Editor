@@ -104,17 +104,12 @@ export function useExecutionWebSocket() {
 
 			// Alerting the completetion of code exectution
 			case "exit":
-				console.log("Execution completed with exit code:", message.exitCode);
+				console.log("Execution completed");
 				setIsRunning(false);
 				setWaitingForInput(false);
 				currentExecutionIdRef.current = null;
-				if (message.exitCode === 0) {
-					dispatch(appendOutput("\n[Execution Completed]\n"));
-					updateEditorProperty("error", false);
-				} else {
-					dispatch(appendOutput("\n[Execution Failed! (Server Issue)]\n"));
-					updateEditorProperty("error", true);
-				}
+				dispatch(appendOutput("\n[Execution Completed]\n"));
+				updateEditorProperty("error", false);
 				break;
 
 			// Asking for input from client
