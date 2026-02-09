@@ -24,7 +24,7 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
             # Pull latest changes from Github
-            (cd ~/Online-Code-Editor && git pull origin main) || (cd ~ && git clone https://github.com/antidude900/Online-Code-Editor.git)
+            (cd ~/Online-Code-Editor && git pull origin main) || (cd ~ && git clone https://github.com/antidude900/Online-Code-Editor.git && cd ~/Online-Code-Editor)
 
             # Install dependencies
             cd server
