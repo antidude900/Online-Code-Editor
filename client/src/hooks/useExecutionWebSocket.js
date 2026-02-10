@@ -84,6 +84,7 @@ export function useExecutionWebSocket() {
 			// If message type is output, update our output of the code editor with the new one
 			case "output":
 				dispatch(appendOutput(message.data));
+				setWaitingForInput(true);
 				break;
 
 			// If its an error, we still have to show the error of the execution of the code in the output as well
@@ -109,13 +110,7 @@ export function useExecutionWebSocket() {
 				setWaitingForInput(false);
 				currentExecutionIdRef.current = null;
 				dispatch(appendOutput("\n[Execution Completed]\n"));
-				updateEditorProperty("error", false);
-				break;
-
-			// Asking for input from client
-			case "input_required":
-				console.log("Program waiting for input");
-				setWaitingForInput(true);
+				updateEditorProperty("error", message.exitCode !== 0);
 				break;
 
 			default:
@@ -154,6 +149,7 @@ export function useExecutionWebSocket() {
 		}
 
 		setWaitingForInput(false);
+		dispatch(appendOutput(input + "\n"));
 		wsRef.current.send(
 			JSON.stringify({
 				type: "input",

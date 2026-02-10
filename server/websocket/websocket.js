@@ -123,15 +123,6 @@ export function startWebSocketServer(server) {
 								executionId,
 							}),
 						);
-
-						// Signal that program might be waiting for input after output
-						ws.send(
-							JSON.stringify({
-								type: "input_required",
-								message: "Program may be waiting for input",
-								executionId,
-							}),
-						);
 					},
 					// sendError
 					(chunk) => {
@@ -182,15 +173,6 @@ export function startWebSocketServer(server) {
 						executionId,
 					}),
 				);
-
-				// Notify client that program can accept input
-				ws.send(
-					JSON.stringify({
-						type: "input_required",
-						message: "Program is ready to accept input",
-						executionId,
-					}),
-				);
 			} catch (error) {
 				console.error(`[${currentExecutionId}] Execution error:`, error);
 				const executionId = currentExecutionId;
@@ -218,7 +200,7 @@ export function startWebSocketServer(server) {
 			}
 		}
 
-		// sends the input for the code sent by the client to the docker via stream instance we got from dockerExecutionService's Execute Code   
+		// sends the input for the code sent by the client to the docker via stream instance we got from dockerExecutionService's Execute Code
 		async function handleInput(data, stream) {
 			const { input } = data;
 

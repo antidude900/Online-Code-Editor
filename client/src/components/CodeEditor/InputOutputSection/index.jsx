@@ -126,7 +126,7 @@ export default function InputOutputSection({
 		if (waitingForInput && inputRef.current && isInteractive) {
 			inputRef.current.focus();
 		}
-	}, [waitingForInput, isInteractive, onSendInput]);
+	}, [waitingForInput, isInteractive]);
 
 	return (
 		<div className={styles.inputOutput}>

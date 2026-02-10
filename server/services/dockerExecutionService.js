@@ -1,4 +1,5 @@
 import Docker from "dockerode";
+import { PassThrough } from "stream";
 
 const docker = new Docker({
 	host: "localhost",
@@ -272,7 +273,7 @@ class DockerExecutionService {
 				AttachStdin: true,
 				AttachStdout: true,
 				AttachStderr: true,
-				Tty: true,
+				Tty: false,
 			});
 
 			// creating a bidirectional stream with the execution instance so that we can send input
@@ -280,23 +281,23 @@ class DockerExecutionService {
 			const stream = await exec.start({
 				hijack: true,
 				stdin: true,
-				Tty: true,
+				Tty: false,
 			});
 
-			stream.setEncoding("utf8");
+			// Manuually separating stdout and stderr (required when not using Tty)
+			const stdout = new PassThrough();
+			const stderr = new PassThrough();
 
-			// removing the extra metadata attached from the output
-			stream.on("data", (chunk) => {
-				let output = chunk.toString("utf8");
-				output = output.replace(
-					/\{"stream":true,"stdin":true,"stdout":true,"stderr":true,"hijack":true\}/g,
-					"",
-				);
+			docker.modem.demuxStream(stream, stdout, stderr);
 
-				if (output.length > 0) {
-					console.log(`[${sessionId}] Output:`, output);
-					sendOutput(Buffer.from(output));
-				}
+			stdout.on("data", (chunk) => {
+				console.log(`[${sessionId}] stdout:`, chunk.toString());
+				sendOutput(chunk);
+			});
+
+			stderr.on("data", (chunk) => {
+				console.log(`[${sessionId}] stderr:`, chunk.toString());
+				sendError(chunk);
 			});
 
 			stream.on("end", async () => {
@@ -332,14 +333,6 @@ class DockerExecutionService {
 					);
 					onExit(1);
 				}
-				this.activeExecutions.delete(sessionId);
-			});
-
-			stream.on("error", (err) => {
-				console.error(`[${sessionId}] Stream error:`, err);
-				sendError(Buffer.from(err.message));
-
-				// Clean up this execution
 				this.activeExecutions.delete(sessionId);
 			});
 
