@@ -78,6 +78,7 @@ const Login = () => {
 			</div>
 
 			{LoginError &&
+				LoginError.data.message &&
 				LoginError.data.message === "Email or Password is incorrect!" && (
 					<div className={styles.login__error}>
 						{LoginError?.data?.message || "Email or Password is incorrect!"}

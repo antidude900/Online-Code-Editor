@@ -26,8 +26,20 @@ jobs:
             # Pull latest changes from Github
             (cd ~/Online-Code-Editor && git pull origin main) || (cd ~ && git clone https://github.com/antidude900/Online-Code-Editor.git)
 
-            # Install dependencies
+            # Navigate to server directory
             cd ~/Online-Code-Editor/server
+
+            # Create .env file with environment variables
+            cat > .env << EOF
+            FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+            MONGODB_URL=${{ secrets.MONGODB_URL }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PORT=${{ secrets.PORT }}
+            EMAIL=${{ secrets.EMAIL }}
+            EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+            EOF
+
+            # Install dependencies
             npm install 
 
             # Restart server with PM2
